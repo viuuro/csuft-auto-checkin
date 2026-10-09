@@ -28,7 +28,7 @@ import hashlib
 import json
 import time as _time
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta, time
+from datetime import date, datetime, timedelta, time
 from typing import Any
 
 import httpx
@@ -238,7 +238,21 @@ class LoginResult:
 
 @dataclass
 class SignTask:
-    """一个打卡任务（宿舍签到任务）。"""
+    """一个打卡任务（宿舍签到任务）。
+
+    任务自身携带**权威的打卡期间**定义，实测字段（2026-10-09 核验）::
+
+        taskStartDate  = "2026-09-05"   打卡期间开始
+        taskEndDate    = "2027-02-04"   打卡期间结束（可跨寒暑假）
+        signWeek       = "星期一,...,星期日,"   哪几天需要打卡
+        signStartTime  = "21:00"        每日时段
+        signEndTime    = "22:30"
+        taskStatus     = 1              任务启用
+        isStaySchoolTask = -1           留校任务标记（覆盖假期的任务）
+
+    因为学校已经把「什么时候要打卡」定义完整，本地校历**不应**再作为
+    硬门禁 —— 否则寒假留校学生会被本地学期区间掐断而静默漏签。
+    """
 
     task_id: str
     task_name: str = ""
@@ -251,6 +265,12 @@ class SignTask:
     is_allow_special_sign: int = 0
     is_allow_late: int = 0
     scan_type: Any = None
+    # 权威打卡期间
+    task_start_date: str = ""
+    task_end_date: str = ""
+    sign_week: str = ""
+    task_status: Any = None
+    is_stay_school_task: Any = None
     dorm: dict[str, Any] = field(default_factory=dict)
     raw: dict[str, Any] = field(default_factory=dict)
 
@@ -304,6 +324,69 @@ class SignTask:
         if moment > end:
             return False, f"已过签到时间（{self.sign_end_time} 结束）"
         return True, "在签到时段内"
+
+    # ------------------------------------------------------------ 打卡期间 --
+
+    @property
+    def is_active(self) -> bool:
+        """任务是否处于启用状态（``taskStatus``）。"""
+        if self.task_status in (None, ""):
+            return True  # 字段缺失时不拦
+        try:
+            return int(self.task_status) == 1
+        except (TypeError, ValueError):
+            return True
+
+    def covers_date(self, day: date) -> bool:
+        """任务期间是否覆盖某一天。
+
+        ``taskStartDate``/``taskEndDate`` 是学校定义的权威打卡期间，
+        可以跨寒暑假（例如 2026-09-05 ~ 2027-02-04 覆盖整个寒假）。
+        字段缺失时返回 True，交由服务端判断。
+        """
+        start = _parse_date_loose(self.task_start_date)
+        end = _parse_date_loose(self.task_end_date)
+        if start is not None and day < start:
+            return False
+        if end is not None and day > end:
+            return False
+        return True
+
+    def day_of_week_required(self, day: date) -> bool:
+        """``signWeek`` 是否包含这一天。
+
+        实测格式：``"星期一,星期二,星期三,星期四,星期五,星期六,星期日,"``
+        （尾随逗号）。字段缺失或为空时返回 True。
+        """
+        raw = (self.sign_week or "").strip()
+        if not raw:
+            return True
+        names = {n.strip() for n in raw.split(",") if n.strip()}
+        if not names:
+            return True
+        return _WEEKDAY_CN[day.weekday()] in names
+
+    def available_on(self, day: date, now: time | None = None) -> tuple[bool, str]:
+        """判断该任务在指定日期能否打卡（期间 + 星期）。
+
+        这是**权威判定** —— 学校已经把「什么时候要打卡」定义完整，
+        本地校历不应再插一道门禁。
+
+        注意：这里**不检查每日时段**。时段由调度器的 ``due_users()``
+        按计划时刻控制（只在 21:00-22:30 内触发），若在此处再拦一道，
+        手动触发与补试会被无谓地挡掉。真正的时段校验在
+        ``FlySourceClient.sign()`` 里（窗口外提交服务端会拒绝）。
+        """
+        if not self.is_active:
+            return False, f"任务已停用（taskStatus={self.task_status}）"
+        if not self.covers_date(day):
+            return False, (
+                f"不在任务打卡期间内"
+                f"（{self.task_start_date} ~ {self.task_end_date}）"
+            )
+        if not self.day_of_week_required(day):
+            return False, f"该星期无需打卡（signWeek={self.sign_week}）"
+        return True, "在任务打卡期间内"
 
     def summary(self) -> dict[str, Any]:
         return {
@@ -702,6 +785,12 @@ class FlySourceClient:
             is_allow_special_sign=int(data.get("isAllowSpecialSign") or 0),
             is_allow_late=int(data.get("isAllowLate") or 0),
             scan_type=data.get("scanType"),
+            # 权威打卡期间（学校定义，可跨寒暑假）
+            task_start_date=str(data.get("taskStartDate") or ""),
+            task_end_date=str(data.get("taskEndDate") or ""),
+            sign_week=str(data.get("signWeek") or ""),
+            task_status=data.get("taskStatus"),
+            is_stay_school_task=data.get("isStaySchoolTask"),
             dorm=dorm,
             raw=data,
         )
@@ -903,6 +992,26 @@ def _parse_hhmm(value: str) -> time | None:
         except ValueError:
             continue
     return None
+
+
+# 星期中文名，索引对应 ``date.weekday()``（0 = 星期一）
+_WEEKDAY_CN = ("星期一", "星期二", "星期三", "星期四", "星期五", "星期六", "星期日")
+
+
+def _parse_date_loose(value: Any) -> date | None:
+    """宽松解析日期：支持 ``YYYY-MM-DD`` 与 ``YYYY/MM/DD``。
+
+    服务端 ``taskStartDate`` 实测为 ``"2026-09-05"``。解析不出来时返回
+    None，调用方应视为「无限制」而不是「不覆盖」。
+    """
+    text = str(value or "").strip()
+    if not text:
+        return None
+    text = text.replace("/", "-").split(" ")[0]
+    try:
+        return datetime.strptime(text, "%Y-%m-%d").date()
+    except ValueError:
+        return None
 
 
 def _today_str() -> str:

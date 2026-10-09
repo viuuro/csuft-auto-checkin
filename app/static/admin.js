@@ -331,7 +331,9 @@
     const data = await api('/admin/api/terms');
     const box = $('termsBox');
     if (!data.terms.length) {
-      box.innerHTML = '<div class="alert warn">尚未配置任何学期 —— 在配置学期之前，系统不会执行任何自动签到。</div>';
+      box.innerHTML = '<div class="alert warn">尚未配置任何学期。'
+        + '系统**仍会**按学校任务的打卡期间自动签到（寒假留校等场景也覆盖），'
+        + '此处配置只影响日历看板的着色与「假期无需签到」提示。</div>';
       return;
     }
     box.innerHTML = `<div class="table-scroll"><table>

@@ -66,12 +66,22 @@ REQUIREMENTS: list[tuple[str, list[tuple[str, list[str]]], list[str]]] = [
         ["自动分配了窗口内签到时刻", "重新随机时刻"],
     ),
     (
-        "用户端 · 跳过寒暑假",
+        "跟随学校打卡期间 / 跳过无需打卡",
         [
             ("app/calendar_rules.py", ["def should_sign", "def holiday_for", "def term_for"]),
             ("app/db.py", ["CREATE TABLE IF NOT EXISTS holidays", "CREATE TABLE IF NOT EXISTS terms"]),
+            (
+                "app/flysource.py",
+                ["task_start_date", "task_end_date", "sign_week",
+                 "def covers_date", "def day_of_week_required", "def available_on"],
+            ),
         ],
-        ["假期内不执行签到", "学期内应签到", "未配置学期时不签到"],
+        [
+            "覆盖寒暑假（寒假留校仍打卡）",
+            "假期内不执行签到",
+            "学期内应签到",
+            "任务期间外不签到",
+        ],
     ),
     (
         "管理端 · 有且仅有管理员自己的账号能登录",

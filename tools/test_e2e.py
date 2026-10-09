@@ -680,6 +680,92 @@ def main() -> int:
             skip_reason(signed_rec),
         )
 
+        # ------------------------------------------------------------------
+        print("\n=== 24. 寒假留校不得被本地校历掐断 ===")
+        # 真实场景：学校任务的打卡期间是 2026-09-05 ~ 2027-02-04（横跨寒假，
+        # 寒假留校学生仍需打卡），而管理员本地配的学期是 2026-09-07 ~
+        # 2027-01-15。早先版本把本地学期当硬门禁，2027-01-16 起会**静默
+        # 漏签**。现在判定以学校任务期间为准，本地校历只作提示。
+        from app.flysource import SignTask
+        from app.services import SignInService
+
+        task = SignTask(
+            task_id="T1",
+            task_name="【本科生】2026年秋季学期平安打卡",
+            task_start_date="2026-09-05",
+            task_end_date="2027-02-04",
+            sign_week="星期一,星期二,星期三,星期四,星期五,星期六,星期日,",
+            sign_start_time="21:00",
+            sign_end_time="22:30",
+            task_status=1,
+            open_locate=0,
+            open_take_photo=0,
+        )
+
+        # 任务期间覆盖的关键日期（本地学期都已结束）
+        for label, day in (
+            ("学期前 2026-09-05", _dt.date(2026, 9, 5)),
+            ("学期末后 2027-01-16", _dt.date(2027, 1, 16)),
+            ("寒假中 2027-01-25", _dt.date(2027, 1, 25)),
+            ("任务末日 2027-02-04", _dt.date(2027, 2, 4)),
+        ):
+            ok, why = task.available_on(day)
+            check(f"任务期间覆盖{label}", ok, why)
+
+        # 任务期间之外
+        ok, why = task.available_on(_dt.date(2027, 2, 5))
+        check("超出任务期间则不打卡", not ok, why)
+        ok, why = task.available_on(_dt.date(2026, 9, 4))
+        check("早于任务期间则不打卡", not ok, why)
+
+        # 停用的任务不打卡
+        off = SignTask(task_id="T2", task_status=0)
+        ok, why = off.available_on(_dt.date(2026, 10, 9))
+        check("任务停用则不打卡", not ok, why)
+
+        # signWeek 生效（只允许周一）
+        monday_only = SignTask(
+            task_id="T3", sign_week="星期一,",
+            task_start_date="2026-09-01", task_end_date="2026-12-31",
+        )
+        check(
+            "signWeek 含周一 → 周一可打卡",
+            monday_only.available_on(_dt.date(2026, 10, 5))[0],  # 周一
+            "2026-10-05 是周一",
+        )
+        check(
+            "signWeek 不含周二 → 周二不打卡",
+            not monday_only.available_on(_dt.date(2026, 10, 6))[0],
+            "2026-10-06 是周二",
+        )
+
+        # 字段缺失时应宽松处理（不误拦）
+        blank = SignTask(task_id="T4")
+        check(
+            "期间/星期字段缺失 → 不误拦",
+            blank.available_on(_dt.date(2027, 1, 20))[0],
+            "字段缺失时交由服务端判断",
+        )
+
+        # run_daily 不得因本地校历整天跳过
+        code_src = (
+            __import__("pathlib").Path(
+                __import__("pathlib").Path(__file__).resolve().parents[1]
+                / "app" / "services.py"
+            ).read_text(encoding="utf-8")
+        )
+        check(
+            "run_daily 不再因校历整天跳过",
+            "daily_skip" not in code_src.split("def run_daily")[1].split("def ")[0],
+            "run_daily 内应无 daily_skip 提前返回",
+        )
+        check(
+            "sign_for_user 内不再有校历硬门禁",
+            "return self._record(student_id, date_str, STATUS_SKIPPED, reason"
+            not in code_src,
+            "不应因 should_sign 为假直接 return",
+        )
+
     print("\n" + "=" * 70)
     print(f"通过 {len(PASSED)} 项，失败 {len(FAILED)} 项")
     if FAILED:

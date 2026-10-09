@@ -813,9 +813,22 @@ class SignInService:
             if not int(user.get("enabled") or 0):
                 return self._record(student_id, date_str, STATUS_SKIPPED, "已被管理员停用", source=source)
 
+            # 注意：这里**不再**用本地校历做硬门禁。
+            #
+            # 学校任务的 taskStartDate/taskEndDate 才是权威的打卡期间，而且
+            # 会覆盖寒暑假（实测 2026-09-05 ~ 2027-02-04 横跨整个寒假，
+            # 寒假留校学生仍需打卡）。早先版本把本地学期当门禁，学期区间
+            # 一旦比学校任务短，那段时间就会**静默漏签**。
+            #
+            # 本地校历现在只用于日历着色与展示，判定交给学校任务。
             should, reason = self.calendar.should_sign(target)
             if not should:
-                return self._record(student_id, date_str, STATUS_SKIPPED, reason, source=source)
+                self.db.log(
+                    "calendar_note",
+                    f"{date_str} 本地校历判定为「{reason}」，"
+                    f"但仍按学校任务期间判定（避免漏签）",
+                    student_id=student_id,
+                )
 
         try:
             with self.new_token_client() as client:
@@ -826,11 +839,24 @@ class SignInService:
                         f"{student_id} 使用已保存的会话签到",
                         student_id=student_id,
                     )
-                task = self._resolve_task(client, user)
+                task = self._resolve_task(client, user, target)
                 if task is None:
                     return self._record(
                         student_id, date_str, STATUS_NO_TASK, "未找到打卡任务", source=source
                     )
+
+                # 以学校任务期间为准判定今天要不要打卡。
+                # （taskStartDate ~ taskEndDate + signWeek + 每日时段）
+                available, why = task.available_on(target)
+                if not available:
+                    return self._record(
+                        student_id, date_str, STATUS_SKIPPED, why, source=source
+                    )
+                self.db.update_user(
+                    student_id,
+                    task_id=task.task_id,
+                    task_name=task.task_name,
+                )
 
                 # 已签到就不再重复提交。
                 # 注意：必须用 already_signed() 判断，不能只看 signStatus ——
@@ -1041,21 +1067,55 @@ class SignInService:
             self.db.log("sign_ok", f"{student_id} {message}", student_id=student_id)
         return SignOutcome(ok=status == STATUS_SUCCESS, status=status, message=message, sign_status=sign_status)
 
-    def _resolve_task(self, client: FlySourceClient, user: dict[str, Any]) -> SignTask | None:
-        """优先用已保存的任务，失败则重新拉列表。"""
+    def _resolve_task(
+        self,
+        client: FlySourceClient,
+        user: dict[str, Any],
+        day: dt.date | None = None,
+    ) -> SignTask | None:
+        """挑出**今天适用**的打卡任务。
+
+        学校可能同时存在多个任务（例如学期任务 + 寒假留校任务），
+        因此不能简单地取第一个 —— 要选期间覆盖今天、且今天需要打卡的那个。
+
+        选择顺序：
+
+        1. 已保存的 task_id（若其期间仍覆盖今天）
+        2. 任务列表里期间覆盖今天的（优先留校任务）
+        3. 兜底：列表第一个
+        """
+        target = day or dt.date.today()
+
+        def usable(task: SignTask) -> bool:
+            return bool(task.task_id) and task.is_active and task.covers_date(target)
+
         task_id = str(user.get("task_id") or "")
         if task_id:
             try:
                 task = client.get_task(task_id)
-                if task.task_id:
+                if usable(task):
                     return task
             except FlySourceError:
                 pass
+
         try:
             tasks = client.list_tasks()
         except FlySourceError:
             return None
-        return tasks[0] if tasks else None
+        if not tasks:
+            return None
+
+        # 期间覆盖今天的任务里，优先「留校任务」—— 寒暑假期间生效的通常是它
+        covering = [t for t in tasks if usable(t)]
+        if covering:
+            stay = [
+                t for t in covering
+                if str(t.is_stay_school_task or "") in ("1", "True", "true")
+            ]
+            return (stay or covering)[0]
+
+        # 没有任何任务覆盖今天：返回第一个，让上层给出明确原因
+        return tasks[0]
 
     # ------------------------------------------------------------------ #
     # 调度入口
@@ -1091,12 +1151,20 @@ class SignInService:
         return out
 
     def run_daily(self, day: dt.date | None = None, *, force: bool = False) -> dict[str, Any]:
-        """对当天所有符合条件的用户执行签到（供调度器与手动触发）。"""
+        """对当天所有符合条件的用户执行签到（供调度器与手动触发）。
+
+        注意：**不再因本地校历而整天跳过**。校历只作提示，是否要打卡由
+        学校任务的期间决定（见 ``sign_for_user``）。否则学期区间一旦比
+        学校任务短（例如寒假留校阶段），整天都会被静默跳过。
+        """
         target = day or dt.date.today()
         should, reason = self.calendar.should_sign(target)
-        if not should and not force:
-            self.db.log("daily_skip", f"{target.isoformat()} 不执行自动签到：{reason}")
-            return {"date": target.isoformat(), "skipped": True, "reason": reason, "results": []}
+        if not should:
+            self.db.log(
+                "calendar_note",
+                f"{target.isoformat()} 本地校历判定为「{reason}」，"
+                f"仍按学校任务期间执行（避免寒假留校等场景漏签）",
+            )
 
         users = self.db.list_signable_users()
         results = []
@@ -1131,14 +1199,15 @@ class SignInService:
         return self.sign_for_user(user, force=force, source="manual")
 
     def retry_failed(self, days: int = 3) -> dict[str, Any]:
-        """重试最近若干天失败/挂起的记录。"""
+        """重试最近若干天失败/挂起的记录。
+
+        只重试**确实失败**的记录。不在本地校历区间内也照样重试 ——
+        那时的失败可能正是漏签造成的，应当补上。
+        """
         today = dt.date.today()
         results = []
         for offset in range(1, max(1, days) + 1):
             day = today - dt.timedelta(days=offset)
-            should, _ = self.calendar.should_sign(day)
-            if not should:
-                continue
             rows = self.db.query(
                 "SELECT student_id FROM sign_records WHERE sign_date = ? AND status = 'failed'",
                 (day.isoformat(),),

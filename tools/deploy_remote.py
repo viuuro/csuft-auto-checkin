@@ -417,7 +417,7 @@ def main() -> int:
         print()
         print("  下一步：")
         print(f"   1) 打开 http://{args.host}:{SERVICE_PORT}/admin 设置管理员账号")
-        print("   2) 进入「校历管理」添加本学期区间与寒暑假（不配则不签到）")
+        print("   2) （可选）进入「校历管理」添加学期与寒暑假 —— 只影响日历着色")
         print("   3) 本机抓包录入同学账号后导入服务器：")
         print(f"      python tools/import_token.py --host {args.host} --user {args.user}")
         print()

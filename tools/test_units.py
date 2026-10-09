@@ -212,7 +212,11 @@ rules = CalendarRules(db)
 
 today = dt.date(2026, 3, 10)
 should, reason = rules.should_sign(today)
-check("未配置学期时不签到", should is False and "未配置学期" in reason, reason)
+check(
+    "未配置学期时本地校历判否（但不影响签到）",
+    should is False and ("未配置学期" in reason or "不影响自动签到" in reason),
+    reason,
+)
 
 db.add_term("2025-2026-2 学期", "2026-02-23", "2026-07-10")
 should, reason = rules.should_sign(today)
