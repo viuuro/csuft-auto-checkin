@@ -2,53 +2,33 @@
 format: 1920x1080
 duration: 120s
 message: "这是一套可自托管的校园打卡自动化工具 —— 但请先看完开头的免责声明再决定用不用"
-arc: 片名 → 免责声明（单页完整） → 授权流程 → 功能与用法 → 部署 → AI 辅助 → 收尾
+arc: 免责声明（单页完整·一次呈现） → 片名 → 授权流程 → 功能与用法 → 部署 → AI 辅助 → 收尾
 audience: 打开 GitHub 仓库、有一定技术基础的同学与开发者
 mode: collaborative
 music: none
 ---
 
-## Frame 1 — 开场与片名
+## Frame 1 — 免责声明（单页完整·开场）
 
-- scene: 终端窗口里光标闪烁，打出一行克隆命令，随后片名与警示行浮出
-- duration: 9s
-- poster: 7s
+- scene: 开场即是一整页免责声明，七条条文一次性全部呈现，静置供阅读
+- duration: 34s
+- poster: 6s
 - transition_in: cut
 - status: outline
-- voiceover: "中南林业科技大学平安打卡自动签到 —— 一套可自托管的工具，仅供学习使用。"
-- blueprint: compose
-- focal: 深色终端面板中的逐字命令行 + 其下的片名
-- roles: terminal panel = foreground subject · cream field = background · kicker + warning line = supporting
-- sfx: typing, impact-bass-1
-- src: compositions/frames/01-title.html
-
-**浅色场**（暖米 `#FAF9F5`，非纯白）。冷开场，语气是"先把话说清楚"，不要欢呼式开场。
-Scene 1 (0.0–1.6s): centered，仅一个深色终端面板（约 62% 宽），暖米色空场，面板内三颗窗口点 + 一个闪烁的 coral 光标。无其它内容。
-Scene 2 (1.6–4.4s): 命令行逐字打出 `$ git clone .../csuft-auto-checkin`，随后第二行 `$ cd csuft-auto-checkin`（typing，落在 beat 上）。面板保持居中。
-Scene 3 (4.4–6.6s): 面板下方浮出 kicker 索引行「仅供学习使用」（coral），随片名「平安打卡自动签到」以大字号入场（impact-bass-1 落在片名落定那一刻）。
-Scene 4 (6.6–9.0s): 警示行「使用前请先读完免责声明」淡入，光标停住不闪。整体静止读完，不做位移。
-
-## Frame 2 — 免责声明（单页完整）
-
-- scene: 免责声明七条在一页内紧凑排布，逐条落定，末尾给出结论行
-- duration: 32s
-- poster: 28s
-- transition_in: crossfade
-- status: outline
-- voiceover: "先看完这份免责声明。七条：与学校无关；可能违反校规；遵守法律法规；风险自负；坐标不代表真实位置；按现状提供不作担保；责任限制。"
+- voiceover: "先看这份免责声明。七条：与学校无关；可能违反校规；遵守法律法规；风险自负；坐标不代表真实位置；按现状提供不作担保；责任限制。"
 - blueprint: compose
 - focal: 七条条文的紧凑网格整体
 - roles: 条文网格 = foreground subject（占满内容区）· 编号列 = supporting · 结论行 = supporting
-- sfx: click-soft, ping
+- sfx: chime
 - src: compositions/frames/02-disclaimer-all.html
 
-**这是全片最要紧的一帧，也是唯一信息密度高的帧。** 目标：**完整七条在一页内讲完**，不删减任何条文。排版像一份正式文件而非警告弹窗 —— 靠栅格、发丝线与留白建立秩序，不靠颜色。
+**这是全片最要紧的一帧，也是唯一信息密度高的帧，同时是开场第一帧。** 目标：**完整七条在一页内一次性全部呈现**，不删减任何条文、不做逐条揭示。排版像一份正式文件而非警告弹窗 —— 靠栅格、发丝线与留白建立秩序，不靠颜色。
 
 信息结构（全部条文逐字保留，来自仓库 `DISCLAIMER.md`）：
 
-- 页眉 kicker：`免责声明`（coral，等宽大写，带 `✱`）
+- 页眉 kicker：`免责声明`（coral，等宽大写，带 `*`）
 - 标题（EB Garamond）：`使用前请先读完`
-- **七条网格**：3 列 × 3 行（前三行放 6 条，第 3 行第 3 格留给第 7 条 + 结论）。每条 = 等宽珊瑚编号 + 一行小标题 + 1–2 行正文（Inter，ink 76%，约 1.16cqw）
+- **七条网格**：3 列布局。每条 = 等宽珊瑚编号 + 一行小标题 + 1–2 行正文（Inter，ink 76%，约 1.16cqw）
   1. `与学校无关` — 本项目与任何学校、任何第三方服务提供商均无关联，未获授权、认可或支持
   2. `可能违反校规` — 「代打卡」可能被认定为违纪行为，可能导致纪律处分
   3. `遵守法律法规` — 需遵守网络安全法、数据安全法、个人信息保护法及所在地法律
@@ -58,11 +38,32 @@ Scene 4 (6.6–9.0s): 警示行「使用前请先读完免责声明」淡入，�
   7. `责任限制` — 在适用法律允许的最大范围内，作者不承担任何责任
 - 页脚结论行（发丝线上方，Inter，ink 62%）：`仅供学习与技术研究使用。继续使用即表示你已阅读并理解上述全部条款。`
 
-动效（要"丰富"但不喧闹，服务于阅读节奏）：
-Scene 1 (0.0–3.0s): 页眉 kicker 与标题先落位，七条网格的位置只显示极淡的发丝分隔线（grid 骨架先立）。
-Scene 2 (3.0–20.0s): 七条**按编号顺序逐条落定**，每条约 2.4 秒间隔 —— 编号先落，标题跟上，正文随后淡入（click-soft 落在每条编号出现时）。
-Scene 3 (20.0–27.0s): 七条全部在场，静置阅读。
-Scene 4 (27.0–32.0s): 页脚结论行淡入（ping），随后整体静止读完。**不做收束动效** —— 让条文自己承重。
+动效（**关键：一次放完，不再逐条落定**）：
+Scene 1 (0.0–1.4s): 页眉 kicker、标题、**七条全部条文、页脚结论行**在同一拍内一起落定 —— 用极短的错位（每条间隔 0.03 秒，总计不到 0.25 秒）做出"整页落下"的观感，而不是逐条宣读。chime 落在整页落定那一刻。
+Scene 2 (1.4–2.0s): 全部就位，画面稳定。
+Scene 3 (2.0–30.0s): **静置 28 秒**供阅读。不做任何位移、不做呼吸动效、不加装饰性动效 —— 这一帧的任务是被读完，不是被观看。
+
+备注：因为条文是一次性呈现，"逐条落定"的原设计已被本帧取消；网格高度按**静态全显**计算（内容底边 ≈798px，留出 100px 安全余量）。
+
+## Frame 2 — 开场与片名
+
+- scene: 终端窗口里光标闪烁，打出一行克隆命令，随后片名与警示行浮出
+- duration: 10s
+- poster: 8s
+- transition_in: crossfade
+- status: outline
+- voiceover: "中南林业科技大学平安打卡自动签到 —— 一套可自托管的工具，仅供学习使用。"
+- blueprint: compose
+- focal: 深色终端面板中的逐字命令行 + 其下的片名
+- roles: terminal panel = foreground subject · cream field = background · kicker + warning line = supporting
+- sfx: typing, impact-bass-1
+- src: compositions/frames/01-title.html
+
+**浅色场**（暖米 `#FAF9F5`，非纯白）。看完免责声明后进入片名 —— 这时的语气是"现在说清楚这是什么"。
+Scene 1 (0.0–1.7s): centered，仅一个深色终端面板（约 62% 宽），暖米色空场，面板内三颗窗口点 + 一个闪烁的 coral 光标。无其它内容。
+Scene 2 (1.7–4.7s): 命令行逐字打出 `$ git clone .../csuft-auto-checkin`，随后第二行 `$ cd csuft-auto-checkin`（typing，落在 beat 上）。面板保持居中。
+Scene 3 (4.7–7.2s): 面板下方浮出 kicker 索引行「仅供学习使用」（coral），随片名「平安打卡自动签到」以大字号入场（impact-bass-1 落在片名落定那一刻）。
+Scene 4 (7.2–10.0s): 警示行「使用前请先读完免责声明」淡入，光标停住不闪。整体静止读完，不做位移。
 
 ## Frame 3 — 怎么接入：授权与绑定
 
@@ -94,7 +95,7 @@ Scene 4 (12.6–16.0s): 底部一行补充说明淡入（Inter，ink 62%）：
 ## Frame 4 — 它能做什么
 
 - scene: 两张界面卡片并排上移入场，各自要点逐条弹出；右上角浮出一个"随机时刻"徽标
-- duration: 15s
+- duration: 16s
 - poster: 12s
 - transition_in: crossfade
 - status: outline
@@ -114,7 +115,7 @@ Scene 4 (12.4–15.0s): 卡片底部各画出一条发丝线收束，随后静�
 ## Frame 5 — 怎么用：一天的流程
 
 - scene: 时间轴从 21:00 铺到 22:30，随机时刻落下一个标记并亮起，下方展开寒暑假说明
-- duration: 13s
+- duration: 14s
 - poster: 10s
 - transition_in: crossfade
 - status: outline

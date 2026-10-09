@@ -142,14 +142,14 @@
   /* (every one of these is released by its own single fromTo below) */
 </style>
 
-<div id="root" data-composition-id="02-disclaimer-all" data-width="1920" data-height="1080" data-duration="32.5">
+<div id="root" data-composition-id="02-disclaimer-all" data-width="1920" data-height="1080" data-duration="34.5">
   <!-- track 0: full-bleed cream ground -->
   <div class="clip f02-disclaimer-all-ground"
-       data-start="0" data-duration="32.5" data-track-index="0"></div>
+       data-start="0" data-duration="34.5" data-track-index="0"></div>
 
   <!-- track 1: content stage -->
   <div class="clip f02-disclaimer-all-stage"
-       data-start="0" data-duration="32.5" data-track-index="1">
+       data-start="0" data-duration="34.5" data-track-index="1">
 
     <p class="f02-disclaimer-all-kicker" id="f02-disclaimer-all-kicker">* 免责声明</p>
     <h1 class="f02-disclaimer-all-title" id="f02-disclaimer-all-title">使用前请先读完</h1>
@@ -206,44 +206,50 @@
 
   var tl = gsap.timeline({ paused: true });
 
-  /* ---------- Scene 1 (0.0–3.0s): kicker + title land, grid skeleton stands ---------- */
+  /* ============================================================
+     开场第一帧：**整页一次性落定**（不做逐条宣读）。
+     七条条文与页脚在同一拍内全部出现 —— 条目之间只有 0.035s 的错位，
+     整页在约 0.6s 内落完，做出"文件整页落下"的观感。
+     之后进入长时间静置，供阅读；不加任何装饰性动效。
+     ============================================================ */
+
+  /* ---------- 整页落定（0.0–1.4s）---------- */
   tl.fromTo(el("kicker"),
       { autoAlpha: 0, y: -8 },
-      { autoAlpha: 1, y: 0, duration: 0.55, ease: "power2.out" }, 0.0);
+      { autoAlpha: 1, y: 0, duration: 0.40, ease: "power2.out" }, 0.0);
 
   tl.fromTo(el("title"),
       { autoAlpha: 0, y: 18 },
-      { autoAlpha: 1, y: 0, duration: 0.42, ease: "power2.out" }, 0.08);
+      { autoAlpha: 1, y: 0, duration: 0.45, ease: "power2.out" }, 0.05);
 
   tl.fromTo(el("rule"),
       { scaleX: 0 },
-      { scaleX: 1, duration: 0.70, ease: "power2.inOut" }, 0.50);
+      { scaleX: 1, duration: 0.55, ease: "power2.inOut" }, 0.12);
 
-  /* The 3x3 tile skeleton is already standing as hairlines + half-step tiles. */
-
-  /* ---------- Scene 2 (3.0–20.0s): seven clauses land in numeric order ---------- */
-  var stagger = 2.4;
+  /* 七条一起落：每条只错开 0.035s（最末条约 0.21s 起），
+     整页在 1.0s 前全部到位。 */
+  var stagger = 0.035;
   for (var i = 1; i <= 7; i++) {
-    var t = 3.0 + (i - 1) * stagger;           // 3.0 .. 17.4
+    var t = 0.18 + (i - 1) * stagger;
     tl.fromTo(el("n" + i),
-        { autoAlpha: 0, y: -10 },
-        { autoAlpha: 1, y: 0, duration: 0.42, ease: "power3.out" }, t);
+        { autoAlpha: 0, y: -8 },
+        { autoAlpha: 1, y: 0, duration: 0.34, ease: "power2.out" }, t);
 
     tl.fromTo(el("h" + i),
-        { autoAlpha: 0, y: 10 },
-        { autoAlpha: 1, y: 0, duration: 0.50, ease: "power2.out" }, t + 0.45);
+        { autoAlpha: 0, y: 8 },
+        { autoAlpha: 1, y: 0, duration: 0.36, ease: "power2.out" }, t + 0.03);
 
     tl.fromTo(el("b" + i),
-        { autoAlpha: 0, y: 8 },
-        { autoAlpha: 1, y: 0, duration: 0.55, ease: "power2.out" }, t + 0.90);
+        { autoAlpha: 0, y: 6 },
+        { autoAlpha: 1, y: 0, duration: 0.38, ease: "power2.out" }, t + 0.06);
   }
 
-  /* ---------- Scene 3 (20.0–27.0s): all seven present, hold for reading ---------- */
-
-  /* ---------- Scene 4 (27.0–32.0s): footer conclusion fades in, then dead still ---------- */
   tl.fromTo(el("footer"),
-      { autoAlpha: 0, y: 10 },
-      { autoAlpha: 1, y: 0, duration: 0.75, ease: "power2.out" }, 27.0);
+      { autoAlpha: 0, y: 8 },
+      { autoAlpha: 1, y: 0, duration: 0.42, ease: "power2.out" }, 0.42);
+
+  /* ---------- 静置阅读（约 1.4s 起到帧末）----------
+     全部内容已就位，此后不做任何位移或呼吸动效。 */
 
   window.__timelines = window.__timelines || {};
   window.__timelines[ID] = tl;
