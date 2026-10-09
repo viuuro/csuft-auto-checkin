@@ -1,0 +1,46 @@
+[Unit]
+Description=中南林学工自动签到服务
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=autosinin
+Group=autosinin
+WorkingDirectory=/opt/autosinin
+
+# data/ 由 systemd 负责创建并归属服务用户（避免因属主不对而写库失败）。
+# 若数据目录放在别处，把这里换成绝对路径即可。
+StateDirectory=autosinin
+StateDirectoryMode=0700
+Environment="DATA_DIR=/opt/autosinin/data"
+Environment="PYTHONUNBUFFERED=1"
+Environment="PYTHONIOENCODING=utf-8"
+# 前缀 - 表示文件不存在时不报错；但若属主/权限不对，systemd 会静默忽略，
+# 所以部署脚本必须保证该文件可被 autosinin 用户读取。
+EnvironmentFile=-/opt/autosinin/.env
+
+# 监听地址由 HOST 环境变量控制：
+#   0.0.0.0   —— 直接用「公网IP:8000」访问（需在阿里云安全组放行 8000）
+#   127.0.0.1 —— 仅本机，前面挂 nginx 反代时用这个（更安全）
+Environment="HOST=0.0.0.0"
+Environment="PORT=8000"
+
+ExecStart=/opt/autosinin/.venv/bin/python /opt/autosinin/run.py --host ${HOST} --port ${PORT}
+
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=autosinin
+
+# ---- 安全加固 ----
+NoNewPrivileges=true
+PrivateTmp=true
+# 整个文件系统只读，仅放行数据目录；代码目录因此无法被进程改写
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/autosinin/data
+
+[Install]
+WantedBy=multi-user.target

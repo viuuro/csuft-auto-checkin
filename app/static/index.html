@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>学工自动签到</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <h1 id="siteName">学工自动签到</h1>
+    <div class="spacer"></div>
+    <span class="who" id="dashWho"></span>
+    <button class="ghost sm hidden" id="logoutBtn">退出</button>
+  </header>
+
+  <main class="wrap narrow" id="mainWrap">
+
+    <!-- ============================ 登录 ============================ -->
+    <section class="card" id="loginCard">
+      <h2>查看我的签到情况</h2>
+      <p class="sub">凭 <b>学号</b> 与首次绑定时设置的 <b>查询口令</b> 查看，无需学校密码。</p>
+      <div class="alert hidden" id="loginAlert"></div>
+      <form id="loginForm" autocomplete="off">
+        <label class="field">
+          <span>学号</span>
+          <input type="text" id="loginStudentId" inputmode="numeric" placeholder="请输入学号" required>
+        </label>
+        <label class="field">
+          <span>查询口令</span>
+          <input type="password" id="loginPassword" placeholder="首次绑定时设置的口令" required>
+        </label>
+        <div class="row">
+          <button type="submit" id="loginBtn">登录查看</button>
+          <button type="button" class="ghost" id="showApply">我是新用户</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- ============================ 申请 ============================ -->
+    <section class="card hidden" id="applyCard">
+      <h2>新用户申请</h2>
+      <div class="alert info">
+        <b>授权方式说明：</b>学校账号启用了短信二次认证，网页端无法用学号密码自动登录。<br>
+        正确流程：<b>①</b> 在此提交申请 → <b>②</b> 联系管理员，在他电脑上的微信小程序里登录一次
+        （管理员用工具采集授权）→ <b>③</b> 管理员把<b>查询口令</b>给你 → <b>④</b> 回到本页用
+        「学号 + 查询口令」查看签到情况。
+      </div>
+      <div class="alert hidden" id="applyAlert"></div>
+      <form id="applyForm" autocomplete="off">
+        <label class="field">
+          <span>学号 <b style="color:var(--err)">*</b></span>
+          <input type="text" id="applyStudentId" inputmode="numeric" placeholder="请输入学号" required>
+        </label>
+        <div class="grid two">
+          <label class="field"><span>姓名</span><input type="text" id="applyName" placeholder="方便管理员核对"></label>
+          <label class="field"><span>手机号</span><input type="text" id="applyPhone" placeholder="选填"></label>
+        </div>
+        <label class="field"><span>专业 / 班级</span><input type="text" id="applyMajor" placeholder="选填"></label>
+        <label class="field"><span>备注</span><textarea id="applyRemark" placeholder="选填，例如宿舍楼栋"></textarea></label>
+        <div class="row">
+          <button type="submit" id="applyBtn">提交申请</button>
+          <button type="button" class="ghost" id="queryStatus">查询审批状态</button>
+          <button type="button" class="ghost" id="applyBack">返回登录</button>
+        </div>
+      </form>
+
+      <hr style="border:none;border-top:1px solid var(--line);margin:18px 0">
+
+      <label class="field">
+        <span>查询审批状态</span>
+        <input type="text" id="statusStudentId" inputmode="numeric" placeholder="输入学号后点右侧按钮">
+      </label>
+      <button type="button" class="ghost hidden" id="showBind">我已拿到学校账号密码，自助绑定</button>
+    </section>
+
+    <!-- ============================ 绑定 ============================ -->
+    <section class="card hidden" id="bindCard">
+      <h2>自助绑定学校打卡账号</h2>
+      <div class="alert warn">
+        仅在<b>你确实持有学校账号密码</b>时使用。<br>
+        若学校要求短信二次认证（多数情况如此），此处会登录失败 ——
+        请改由管理员在微信小程序里为你采集授权。
+      </div>
+      <div class="alert hidden" id="bindAlert"></div>
+      <form id="bindForm" autocomplete="off">
+        <label class="field">
+          <span>学号</span>
+          <input type="text" id="bindStudentId" inputmode="numeric" required>
+        </label>
+        <label class="field">
+          <span>学校打卡账号密码</span>
+          <input type="password" id="bindPassword" placeholder="与微信小程序登录时一致" required>
+        </label>
+        <label class="field">
+          <span>设置查询口令 <span class="muted">（本服务专用，≥4 位）</span></span>
+          <input type="password" id="bindQueryPassword" placeholder="以后用它查看签到情况" required>
+        </label>
+        <label class="field">
+          <span>图形验证码 <span class="muted">（若学校要求）</span></span>
+          <div class="captcha-box">
+            <input type="text" id="bindCaptchaCode" placeholder="输入图中字符" autocomplete="off">
+            <div id="captchaBox" style="display:flex"></div>
+          </div>
+        </label>
+        <div class="row">
+          <button type="button" class="ghost sm" id="refreshCaptcha">刷新验证码</button>
+        </div>
+        <div class="row mt">
+          <button type="submit" id="bindBtn">绑定并开启自动签到</button>
+          <button type="button" class="ghost" id="bindBack">返回登录</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- ============================ 看板 ============================ -->
+    <section class="hidden" id="dashCard">
+      <div class="card">
+        <h2>今日概览</h2>
+        <div id="todayPanel"></div>
+      </div>
+
+      <div class="card">
+        <div class="cal-head">
+          <button class="ghost sm" id="calPrev">‹ 上月</button>
+          <div class="title" id="calTitle"></div>
+          <button class="ghost sm" id="calNext">下月 ›</button>
+          <div class="spacer" style="flex:1"></div>
+          <button class="ghost sm" id="calToday">今天</button>
+          <button class="ghost sm" id="calSync">同步学校数据</button>
+        </div>
+        <p class="sub">绿色为签到成功，红色为失败，灰色为假期/学期外无需签到。</p>
+        <div class="cal-grid" id="calGrid"></div>
+        <div class="legend">
+          <span><i style="background:var(--ok-soft);border:1px solid #bfe5d3"></i>已签到</span>
+          <span><i style="background:var(--err-soft);border:1px solid #f3c6c6"></i>签到失败</span>
+          <span><i style="background:var(--warn-soft);border:1px solid #f0dcb2"></i>待签到</span>
+          <span><i style="background:var(--skip-soft)"></i>无需签到</span>
+        </div>
+        <div class="legend" id="calSummary" style="margin-top:10px"></div>
+      </div>
+
+      <div class="card">
+        <h2>签到明细</h2>
+        <p class="sub">最近 90 天</p>
+        <button class="ghost sm mb" id="loadRecords">加载明细</button>
+        <div id="recordsBox"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

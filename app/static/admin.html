@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>管理后台 · 学工自动签到</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <h1>管理后台</h1>
+    <div class="spacer"></div>
+    <span class="who" id="adminWho"></span>
+    <button class="ghost sm hidden" id="logoutBtn">退出</button>
+  </header>
+
+  <main class="wrap">
+
+    <!-- ============================ 登录 ============================ -->
+    <section class="card hidden" id="loginCard" style="max-width:420px;margin:40px auto">
+      <h2 id="loginTitle">管理员登录</h2>
+      <p class="sub" id="loginSub">仅管理员本人账号可登录。</p>
+      <div class="alert hidden" id="loginAlert"></div>
+      <form id="loginForm" autocomplete="off">
+        <label class="field"><span>用户名</span><input type="text" id="loginUsername" required></label>
+        <label class="field"><span>密码</span><input type="password" id="loginPassword" required></label>
+        <button type="submit" id="loginBtn" style="width:100%">登录</button>
+      </form>
+    </section>
+
+    <!-- ============================ 后台 ============================ -->
+    <section class="hidden" id="panel">
+      <div class="tabs">
+        <button class="tab active" data-tab="overview">总览</button>
+        <button class="tab" data-tab="pending">待审批 <span id="pendingBadge" class="tag warn hidden">0</span></button>
+        <button class="tab" data-tab="members">成员管理</button>
+        <button class="tab" data-tab="calendar">校历管理</button>
+        <button class="tab" data-tab="logs">运行日志</button>
+      </div>
+
+      <!-- ---------------------- 总览 ---------------------- -->
+      <div class="tab-panel" id="tab-overview">
+        <div class="card">
+          <h2>运行状态</h2>
+          <div class="grid four" id="statsBox"></div>
+          <div class="alert mt" id="calendarHint"></div>
+          <p class="muted" id="schedulerHint"></p>
+        </div>
+
+        <div class="card">
+          <h2>手动操作</h2>
+          <div class="row">
+            <button class="ghost" id="btnRandomize">重新随机分配签到时刻</button>
+            <button class="ghost" id="btnRetry">重试近 1 天失败记录</button>
+            <button class="ghost" id="btnRunToday">立即执行今日签到</button>
+          </div>
+          <div class="alert hidden mt" id="actionAlert"></div>
+          <div class="row mt">
+            <label class="field" style="margin:0;flex:1;min-width:180px">
+              <span>校验某天是否会签到</span>
+              <input type="date" id="checkDate">
+            </label>
+            <button class="ghost" id="btnCheckDate" style="margin-top:22px">校验</button>
+          </div>
+          <div id="checkDateResult" class="mt"></div>
+        </div>
+      </div>
+
+      <!-- ---------------------- 待审批 ---------------------- -->
+      <div class="tab-panel hidden" id="tab-pending">
+        <div class="card">
+          <h2>新用户申请</h2>
+          <p class="sub">必须由你亲自批准，批准后该用户才能绑定并启用自动签到。</p>
+          <div id="pendingBox"></div>
+        </div>
+      </div>
+
+      <!-- ---------------------- 成员管理 ---------------------- -->
+      <div class="tab-panel hidden" id="tab-members">
+        <div class="card">
+          <h2>成员管理</h2>
+          <p class="sub">共 <span id="memberCount">0</span> 位成员。可停用、重置查询口令、手动签到或删除。</p>
+          <div id="membersBox"></div>
+        </div>
+      </div>
+
+      <!-- ---------------------- 校历 ---------------------- -->
+      <div class="tab-panel hidden" id="tab-calendar">
+        <div class="card">
+          <h2>学期区间</h2>
+          <p class="sub">只有在学期区间内且不在假期区间时才会执行自动签到。</p>
+          <div id="termsBox"></div>
+          <form id="termForm" class="mt" autocomplete="off">
+            <div class="grid two">
+              <label class="field"><span>学期名称</span><input type="text" id="termName" placeholder="如 2025-2026-1 学期" required></label>
+              <label class="field"><span>备注</span><input type="text" id="termNote" placeholder="选填"></label>
+            </div>
+            <div class="grid two">
+              <label class="field"><span>开始日期</span><input type="date" id="termStart" required></label>
+              <label class="field"><span>结束日期</span><input type="date" id="termEnd" required></label>
+            </div>
+            <button type="submit">添加学期</button>
+          </form>
+        </div>
+
+        <div class="card">
+          <h2>假期 / 调休</h2>
+          <p class="sub">寒暑假期间自动跳过签到。<b>调休上课</b>类型表示该区间照常签到。</p>
+          <div id="holidaysBox"></div>
+          <form id="holidayForm" class="mt" autocomplete="off">
+            <div class="grid two">
+              <label class="field"><span>名称</span><input type="text" id="holidayName" placeholder="如 2026 寒假" required></label>
+              <label class="field">
+                <span>类型</span>
+                <select id="holidayKind">
+                  <option value="vacation">假期（跳过签到）</option>
+                  <option value="holiday">节假日（跳过签到）</option>
+                  <option value="makeup">调休上课（照常签到）</option>
+                </select>
+              </label>
+            </div>
+            <div class="grid two">
+              <label class="field"><span>开始日期</span><input type="date" id="holidayStart" required></label>
+              <label class="field"><span>结束日期</span><input type="date" id="holidayEnd" required></label>
+            </div>
+            <button type="submit">添加</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- ---------------------- 日志 ---------------------- -->
+      <div class="tab-panel hidden" id="tab-logs">
+        <div class="card">
+          <h2>运行日志</h2>
+          <div class="row mb">
+            <button class="ghost sm" id="btnReloadLogs">刷新</button>
+            <input type="text" id="logFilter" placeholder="按学号过滤" style="max-width:220px">
+            <button class="ghost sm" id="btnFilterLogs">过滤</button>
+          </div>
+          <div class="log-list" id="logsBox"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="/static/admin.js"></script>
+</body>
+</html>

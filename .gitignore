@@ -1,0 +1,69 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+
+# 运行数据（含加密后的凭据与数据库，务必不要提交）
+data/
+*.db
+*.db-wal
+*.db-shm
+
+# 环境变量
+.env
+
+# 本地真实标识清单（审计脚本用，含真实学号 / 姓名 / IP）
+tools/.private-terms
+
+# 构建中间产物与分发包
+# dist/ 里是打包好的二进制（含 mitmdump.exe 与证书），体积大且随构建变化，
+# 不应进 git 历史 —— 一旦提交就无法从历史中移除。
+.build-kit/
+dist/
+release/
+
+# 抓包产物（含真实凭据，绝不入库）
+tools/capture/
+tools/proxy_backup.txt
+
+# 部署密钥（绝不入库）
+.deploy-keys/
+*.pem
+*.p12
+
+# ---- 逆向分析中间产物（本地留档，不入库）----
+# 解密后的包与反编译产物（体积大 / 含第三方代码）
+tools/dec-*.wxapkg
+tools/applet_copy.db*
+tools/app-service.js
+tools/app-service.pretty.js
+tools/logic-*.txt
+tools/captcha_sample.*
+tools/src-wx0e47/
+tools/unpacked-wx0e47/
+# 一次性探查脚本（结论已固化进 app/flysource.py 与 README）
+tools/analyze-cipher.mjs
+tools/inspect-decrypted.mjs
+tools/brute-index.mjs
+tools/probe-index.mjs
+tools/hunt-records.mjs
+tools/find-html.mjs
+tools/find_client_creds.py
+tools/probe_auth_surface.py
+tools/probe_portal.py
+tools/probe_portal_js.py
+tools/probe_web_client.py
+tools/pretty.mjs
+tools/hexdump.mjs
+tools/check_deps.py
+# 第三方解密参考实现
+tools/pc_wxapkg_decrypt/
+tools/pc_wxapkg_decrypt_python/
+
+# 编辑器
+.idea/
+.vscode/
+*.swp
+.DS_Store
