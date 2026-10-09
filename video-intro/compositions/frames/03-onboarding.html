@@ -1,0 +1,319 @@
+<template>
+  <style>
+    @font-face{font-family:"EB Garamond";src:url("assets/fonts/EBGaramond-400.woff2") format("woff2");font-weight:400;font-display:block}
+    @font-face{font-family:"EB Garamond";src:url("assets/fonts/EBGaramond-700.woff2") format("woff2");font-weight:700;font-display:block}
+    @font-face{font-family:"Inter";src:url("assets/fonts/Inter-400.woff2") format("woff2");font-weight:400;font-display:block}
+    @font-face{font-family:"Inter";src:url("assets/fonts/Inter-700.woff2") format("woff2");font-weight:700;font-display:block}
+    @font-face{font-family:"JetBrains Mono";src:url("assets/fonts/JetBrainsMono-400.woff2") format("woff2");font-weight:400;font-display:block}
+    @font-face{font-family:"JetBrains Mono";src:url("assets/fonts/JetBrainsMono-700.woff2") format("woff2");font-weight:700;font-display:block}
+    @font-face{font-family:"Noto Serif SC";src:url("assets/fonts/NotoSerifSC-400.woff2") format("woff2");font-weight:400;font-display:block}
+    @font-face{font-family:"Noto Sans SC";src:url("assets/fonts/NotoSansSC-400.woff2") format("woff2");font-weight:400;font-display:block}
+    @font-face{font-family:"Noto Sans SC";src:url("assets/fonts/NotoSansSC-700.woff2") format("woff2");font-weight:700;font-display:block}
+
+    /* ── frame root: sized + container for cqw units (never a class on the data-composition-id element) ── */
+    #root {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      container-type: size;
+      overflow: hidden;
+      color: #141413;
+      font-family: "Inter", "Noto Sans SC", sans-serif;
+      font-kerning: normal;
+    }
+    #root,
+    #root * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* ── clip layers ── */
+    #root .clip {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+    #root .f03-onboarding-ground {
+      background: #FAF9F5;
+    }
+
+    /* ── content stage: full-bleed pad, 4.2cqw (= 80.64px @1920) ── */
+    #root .f03-onboarding-pad {
+      position: absolute;
+      inset: 0;
+      padding: 4.2cqw;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    /* ── header ── */
+    #root .f03-onboarding-kicker {
+      display: flex;
+      align-items: baseline;
+      gap: 0.42em;
+      font-family: "JetBrains Mono", monospace;
+      font-weight: 400;
+      font-size: 28px;
+      line-height: 1.2;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #BF7056;
+    }
+    #root .f03-onboarding-spike {
+      font-size: 30px;
+      line-height: 1;
+      color: #BF7056;
+    }
+    #root .f03-onboarding-title {
+      margin-top: 26px;
+      font-family: "EB Garamond", "Noto Serif SC", serif;
+      font-weight: 400;
+      font-size: 4.6cqw;
+      line-height: 1.06;
+      letter-spacing: -0.012em;
+      color: #141413;
+    }
+
+    /* ── the track: one full-width tile band carrying four empty step slots ── */
+    #root .f03-onboarding-strip {
+      margin-top: 88px;
+      padding: 52px 44px 56px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr 84px);
+      background: #EFE9DE;
+      border: 1px solid rgba(20, 20, 19, 0.12);
+      border-radius: 12px;
+      box-shadow: 0 1px 3px rgba(20, 20, 19, 0.08), 0 4px 16px rgba(20, 20, 19, 0.04);
+    }
+    #root .f03-onboarding-slot {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+    #root .f03-onboarding-num {
+      font-family: "JetBrains Mono", monospace;
+      font-weight: 400;
+      font-size: 32px;
+      line-height: 1;
+      letter-spacing: 0.02em;
+      color: #BF7056;
+    }
+    #root .f03-onboarding-h {
+      margin-top: 28px;
+      font-family: "Inter", "Noto Sans SC", sans-serif;
+      font-weight: 700;
+      font-size: 36px;
+      line-height: 1.24;
+      letter-spacing: -0.005em;
+      color: #141413;
+    }
+    #root .f03-onboarding-p {
+      margin-top: 20px;
+      min-height: 69.3px;
+      font-family: "Inter", "Noto Sans SC", sans-serif;
+      font-weight: 400;
+      font-size: 21px;
+      line-height: 1.65;
+      color: color-mix(in srgb, #141413 76%, transparent);
+    }
+    #root .f03-onboarding-code {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 19px;
+      letter-spacing: 0;
+      white-space: nowrap;
+    }
+
+    /* connectors live in the 84px gutters of the track; they draw left → right */
+    #root .f03-onboarding-line {
+      align-self: start;
+      width: 100%;
+      height: 1px;
+      margin-top: 15.5px;
+      background: rgba(20, 20, 19, 0.12);
+      transform-origin: left center;
+    }
+
+    /* ── footer ── */
+    #root .f03-onboarding-rule {
+      margin-top: 100px;
+      height: 1px;
+      background: rgba(20, 20, 19, 0.12);
+      transform-origin: left center;
+    }
+    #root .f03-onboarding-footer {
+      margin-top: 40px;
+      font-family: "Inter", "Noto Sans SC", sans-serif;
+      font-weight: 400;
+      font-size: 21px;
+      line-height: 1.5;
+      color: color-mix(in srgb, #141413 62%, transparent);
+    }
+  </style>
+
+  <div
+    id="root"
+    data-composition-id="03-onboarding"
+    data-start="0"
+    data-duration="16.5"
+    data-width="1920"
+    data-height="1080"
+  >
+    <!-- track 0 · full-bleed cream ground -->
+    <div
+      class="clip f03-onboarding-ground"
+      data-start="0"
+      data-duration="16.5"
+      data-track-index="0"
+    ></div>
+
+    <!-- track 1 · content stage -->
+    <div
+      class="clip f03-onboarding-stage"
+      data-start="0"
+      data-duration="16.5"
+      data-track-index="1"
+    >
+      <div class="f03-onboarding-pad">
+        <div class="f03-onboarding-kicker" id="f03-onboarding-kicker">
+          <span class="f03-onboarding-spike">✱</span><span>怎么接入</span>
+        </div>
+        <h1 class="f03-onboarding-title" id="f03-onboarding-title">四步开始自动签到</h1>
+
+        <!-- the track + four step slots; connectors sit in the gutters between the slots -->
+        <div class="f03-onboarding-strip" id="f03-onboarding-strip">
+          <article class="f03-onboarding-slot" id="f03-onboarding-slot-1">
+            <div class="f03-onboarding-num" id="f03-onboarding-num-1">01</div>
+            <h2 class="f03-onboarding-h" id="f03-onboarding-h-1">跑一次小工具</h2>
+            <p class="f03-onboarding-p" id="f03-onboarding-p-1">在 Windows 上双击运行，自动装好证书与代理</p>
+          </article>
+          <span class="f03-onboarding-line" id="f03-onboarding-line-1"></span>
+
+          <article class="f03-onboarding-slot" id="f03-onboarding-slot-2">
+            <div class="f03-onboarding-num" id="f03-onboarding-num-2">02</div>
+            <h2 class="f03-onboarding-h" id="f03-onboarding-h-2">拿到登录凭证</h2>
+            <p class="f03-onboarding-p" id="f03-onboarding-p-2">工具把抓到的会话写入 <span class="f03-onboarding-code">token-result.txt</span></p>
+          </article>
+          <span class="f03-onboarding-line" id="f03-onboarding-line-2"></span>
+
+          <article class="f03-onboarding-slot" id="f03-onboarding-slot-3">
+            <div class="f03-onboarding-num" id="f03-onboarding-num-3">03</div>
+            <h2 class="f03-onboarding-h" id="f03-onboarding-h-3">发给管理员</h2>
+            <p class="f03-onboarding-p" id="f03-onboarding-p-3">把结果文件交给管理员核对</p>
+          </article>
+          <span class="f03-onboarding-line" id="f03-onboarding-line-3"></span>
+
+          <article class="f03-onboarding-slot" id="f03-onboarding-slot-4">
+            <div class="f03-onboarding-num" id="f03-onboarding-num-4">04</div>
+            <h2 class="f03-onboarding-h" id="f03-onboarding-h-4">批准后自动签到</h2>
+            <p class="f03-onboarding-p" id="f03-onboarding-p-4">管理员确认后加入名单，每天自动执行</p>
+          </article>
+          <span class="f03-onboarding-line" id="f03-onboarding-line-4"></span>
+        </div>
+
+        <div class="f03-onboarding-rule" id="f03-onboarding-rule"></div>
+        <p class="f03-onboarding-footer" id="f03-onboarding-footer">凭证只保存在你自己的服务器上，工具不上传任何数据</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var ID = "03-onboarding";
+      var DOM = "f" + ID + "-";
+      var gsapRef = window.gsap;
+      var root = document.getElementById("root");
+      if (!gsapRef || !root) return;
+
+      function sel(name) {
+        return "#" + DOM + name;
+      }
+
+      var tl = gsapRef.timeline({ paused: true });
+
+      /* ── Scene 1 · 0.0–1.8s — kicker + title rise and fade in ── */
+      tl.fromTo(
+        sel("kicker"),
+        { autoAlpha: 0, y: 12 },
+        { autoAlpha: 1, y: 0, duration: 0.55, ease: "power2.out" },
+        0.12
+      );
+      tl.fromTo(
+        sel("title"),
+        { autoAlpha: 0, y: 12 },
+        { autoAlpha: 1, y: 0, duration: 0.65, ease: "power2.out" },
+        0.3
+      );
+
+      /* ── Scene 2 · 1.8–4.2s — the track and the four empty slots (numbers only) land ── */
+      tl.fromTo(
+        sel("strip"),
+        { autoAlpha: 0, y: 12 },
+        { autoAlpha: 1, y: 0, duration: 0.6, ease: "power2.out" },
+        1.9
+      );
+
+      var i;
+      for (i = 1; i <= 4; i++) {
+        tl.fromTo(
+          sel("slot-" + i),
+          { autoAlpha: 0, y: 10 },
+          { autoAlpha: 1, y: 0, duration: 0.5, ease: "power2.out" },
+          1.98 + (i - 1) * 0.13
+        );
+        tl.fromTo(
+          sel("num-" + i),
+          { autoAlpha: 0, y: 8, scale: 0.94 },
+          { autoAlpha: 1, y: 0, scale: 1, duration: 0.4, ease: "power2.out" },
+          2.14 + (i - 1) * 0.13
+        );
+      }
+
+      /* ── Scene 3 · 4.2–12.6s — the four steps land in order (number, heading, line),
+         each step's trailing connector draws as that step lands ── */
+      var steps = [4.2, 6.3, 8.4, 10.5];
+      for (i = 0; i < steps.length; i++) {
+        var at = steps[i];
+        var n = i + 1;
+        tl.fromTo(
+          sel("h-" + n),
+          { autoAlpha: 0, y: 12 },
+          { autoAlpha: 1, y: 0, duration: 0.55, ease: "power2.out" },
+          at
+        );
+        tl.fromTo(
+          sel("p-" + n),
+          { autoAlpha: 0, y: 10 },
+          { autoAlpha: 1, y: 0, duration: 0.55, ease: "power2.out" },
+          at + 0.45
+        );
+        tl.fromTo(
+          sel("line-" + n),
+          { scaleX: 0 },
+          { scaleX: 1, duration: 0.7, ease: "power2.inOut" },
+          at + 1.05
+        );
+      }
+
+      /* ── Scene 4 · 12.6–16.0s — section rule draws, footer fades in, then holds dead still ── */
+      tl.fromTo(
+        sel("rule"),
+        { scaleX: 0 },
+        { scaleX: 1, duration: 0.8, ease: "power2.inOut" },
+        12.65
+      );
+      tl.fromTo(
+        sel("footer"),
+        { autoAlpha: 0, y: 8 },
+        { autoAlpha: 1, y: 0, duration: 0.6, ease: "power2.out" },
+        13.05
+      );
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[ID] = tl;
+    })();
+  </script>
+</template>

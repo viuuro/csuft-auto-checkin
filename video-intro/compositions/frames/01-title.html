@@ -1,0 +1,307 @@
+<template>
+  <style>
+/* CJK 子集字体（tools/prepare_cjk_fonts.py 生成）*/
+@font-face {
+  font-family: "Noto Sans SC";
+  font-style: normal;
+  font-weight: 400;
+  src: url("assets/fonts/NotoSansSC-400.woff2") format("woff2");
+  font-display: block;
+}
+@font-face {
+  font-family: "Noto Sans SC";
+  font-style: normal;
+  font-weight: 700;
+  src: url("assets/fonts/NotoSansSC-700.woff2") format("woff2");
+  font-display: block;
+}
+@font-face {
+  font-family: "Noto Serif SC";
+  font-style: normal;
+  font-weight: 400;
+  src: url("assets/fonts/NotoSerifSC-400.woff2") format("woff2");
+  font-display: block;
+}
+
+    /* ---- fonts (paths resolve against the host document, like every asset ref in this project) ---- */
+    @font-face { font-family: "EB Garamond"; src: url("assets/fonts/EBGaramond-400.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: block; }
+    @font-face { font-family: "EB Garamond"; src: url("assets/fonts/EBGaramond-700.woff2") format("woff2"); font-weight: 700; font-style: normal; font-display: block; }
+    @font-face { font-family: "Inter"; src: url("assets/fonts/Inter-400.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: block; }
+    @font-face { font-family: "Inter"; src: url("assets/fonts/Inter-700.woff2") format("woff2"); font-weight: 700; font-style: normal; font-display: block; }
+    @font-face { font-family: "JetBrains Mono"; src: url("assets/fonts/JetBrainsMono-400.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: block; }
+    @font-face { font-family: "JetBrains Mono"; src: url("assets/fonts/JetBrainsMono-700.woff2") format("woff2"); font-weight: 700; font-style: normal; font-display: block; }
+
+    :root {
+      --01-title-cream:#FAF9F5;        /* 深色面上的文字（终端命令行） */
+      --01-title-ink:#141413;          /* 浅色场上的文字（片名、警示行） */
+      --01-title-coral: #BF7056;
+      --01-title-navy-elev: #252320;
+      --01-title-teal: #5DB8A6;
+      --01-title-amber: #E8A55A;
+      --01-title-hair-navy: color-mix(in srgb, #FAF9F5 14%, transparent);
+    }
+
+    /* container law: every frame-relative unit is cqw/cqh against the frame root */
+    #root {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      container-type: size;
+      overflow: hidden;
+      font-family: "Inter", system-ui, sans-serif;
+      text-rendering: optimizeLegibility;
+    }
+
+    /* ---------- ground: full-bleed cream field (own clip layer) ---------- */
+    .f01-title-ground {
+      position: absolute;
+      inset: 0;
+      background: #FAF9F5;
+    }
+
+    /* ---------- scene stage: the 62cqw stack, centered with its midline near 0.42h ---------- */
+    .f01-title-scene {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    .f01-title-cam {
+      position: absolute;
+      left: 50%;
+      /* 居中必须用 margin，不能用 translateX(-50%)：
+         GSAP 会接管 transform 属性（这里是镜头推近的 scale），
+         写在那里的居中会被覆盖，元素就整体向右溢出半个宽度。 */
+      margin-left: -31cqw;          /* = width / 2 */
+      top: 50%;
+      margin-top: -21cqw;           /* 垂直同理，约半个内容高度 */
+      width: 62cqw;
+      text-align: center;
+      will-change: transform;
+    }
+
+    /* ---------- terminal panel (foreground subject) ---------- */
+    .f01-title-term {
+      background: var(--01-title-navy-elev);
+      border: 1px solid var(--01-title-hair-navy);
+      border-radius: 8px;
+      padding: 2.2cqw 2.8cqw;
+      text-align: left;
+      box-shadow: 0 1px 3px color-mix(in srgb, rgba(20,20,19,.12) 8%, transparent),
+                  0 4px 16px color-mix(in srgb, rgba(20,20,19,.12) 4%, transparent);
+    }
+
+    .f01-title-dots { display: flex; gap: 0.99cqw; margin-bottom: 1.35cqw; }
+
+    .f01-title-dot {
+      display: block;
+      width: 0.99cqw;
+      height: 0.99cqw;
+      border-radius: 9999px;
+      background: color-mix(in srgb, #FAF9F5 22%, transparent);
+    }
+
+    .f01-title-line {
+      position: relative;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 30px;
+      line-height: 46px;
+      font-weight: 400;
+      letter-spacing: 0;
+      color: var(--01-title-cream);
+      white-space: pre;
+      overflow: hidden;
+    }
+    .f01-title-line + .f01-title-line { margin-top: 0.52cqw; }
+
+    /* type-on: every run is a real span, revealed in order by an opacity/transform stagger — the
+       timeline owns the state, so it is seek-safe (no per-frame JS, no DOM-as-clock). */
+    .f01-title-rv { display: inline-block; will-change: transform, opacity; }
+
+    .f01-title-prompt { color: var(--01-title-teal); font-weight: 400; }
+    .f01-title-cmd { color: var(--01-title-cream); font-weight: 500; }
+
+    /* the one coral voltage of this frame */
+    .f01-title-caret {
+      display: inline-block;
+      width: 9px;
+      height: 30px;
+      margin-left: 6px;
+      vertical-align: -4px;
+      background: var(--01-title-coral);
+      opacity: 0;
+      will-change: opacity;
+    }
+
+    /* ---------- index kicker: amber, NOT coral (coral fails contrast on the dark panel) ---------- */
+    .f01-title-kicker {
+      margin-top: 2.65cqw;
+      /* JetBrains Mono carries the mono register; the CJK run has no mono file in this project,
+         so it lands on the host's Noto Sans SC and the tracking register carries. */
+      font-family: "JetBrains Mono", "Noto Sans SC", monospace;
+      font-size: 28px;
+      font-weight: 500;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      /* 浅色场上的索引标签用 coral（3.52:1）而不是 amber ——
+         amber #E8A55A 是为深色代码面调的，在暖米底上只有约 2:1。 */
+      color: var(--01-title-coral);
+    }
+
+    .f01-title-rule {
+      width: 104px;
+      height: 1px;
+      margin: 1.35cqw auto 0;
+      background: color-mix(in srgb, #FAF9F5 30%, transparent);
+      transform-origin: 50% 50%;
+    }
+
+    /* ---------- display title: EB Garamond, cream (CJK runs fall to the serif CJK fallback) ---------- */
+    .f01-title-name {
+      margin-top: 0.95cqw;
+      /* EB Garamond owns the Latin/display register; the CJK run has no serif CJK file in this
+         project, so it lands on the host's Noto Serif SC (never a generic sans). */
+      font-family: "EB Garamond", "Noto Serif SC", serif;
+      font-size: 140px;
+      font-weight: 400;
+      line-height: 1.04;
+      letter-spacing: -0.022em;
+      /* 片名在**浅色场上**，必须用 ink。不能用 --01-title-cream：
+         那个变量在终端面板内作命令行文字是正确的（面板是深色面），
+         但在面板外会把片名染成和底色相同的 #FAF9F5 —— 白底白字。 */
+      color: var(--01-title-ink);
+      white-space: nowrap;
+    }
+    .f01-title-ch { display: inline-block; will-change: transform, opacity; }
+
+    /* ---------- muted warning line ---------- */
+    .f01-title-warn {
+      margin-top: 0.85cqw;
+      font-family: "Inter", "Noto Sans SC", system-ui, sans-serif;
+      font-size: 31px;
+      font-weight: 400;
+      line-height: 1.3;
+      letter-spacing: 0;
+      color: color-mix(in srgb, #141413 84%, transparent);
+    }
+  </style>
+
+  <div data-hf-id="hf-s14w" id="root" data-composition-id="01-title" data-width="1920" data-height="1080" data-duration="9.5">
+    <!-- ground: full-bleed cream field on its own clip layer -->
+    <div data-hf-id="hf-02bk" class="clip f01-title-ground" data-start="0" data-duration="9.5" data-track-index="0" id="f01-title-el1"></div>
+
+    <div data-hf-id="hf-ylxj" class="clip f01-title-scene" data-start="0" data-duration="9.5" data-track-index="1" id="f01-title-el2">
+      <div data-hf-id="hf-k5c2" class="f01-title-cam" id="f01-title-cam">
+
+        <!-- foreground subject: dark terminal panel -->
+        <div data-hf-id="hf-f2n6" class="f01-title-term" id="f01-title-term">
+          <div data-hf-id="hf-m4kn" class="f01-title-dots">
+            <i data-hf-id="hf-zi5k" class="f01-title-dot"></i><i data-hf-id="hf-djfk" class="f01-title-dot"></i><i data-hf-id="hf-ccih" class="f01-title-dot"></i>
+          </div>
+          <div data-hf-id="hf-mf2z" class="f01-title-line" id="f01-title-ln1"><span data-hf-id="hf-ycz5" class="f01-title-rv f01-title-prompt">$</span><span data-hf-id="hf-jewy" class="f01-title-rv"> </span><span data-hf-id="hf-gjz1" class="f01-title-rv f01-title-cmd">git</span><span data-hf-id="hf-2rom" class="f01-title-rv"> </span><span data-hf-id="hf-myms" class="f01-title-rv f01-title-cmd">clone</span><span data-hf-id="hf-35zn" class="f01-title-rv"> </span><span data-hf-id="hf-qa8j" class="f01-title-rv f01-title-cmd">.../csuft-auto-checkin</span><span data-hf-id="hf-dth9" class="f01-title-caret" id="f01-title-caret-1"></span></div>
+          <div data-hf-id="hf-dr74" class="f01-title-line" id="f01-title-ln2"><span data-hf-id="hf-hvdx" class="f01-title-rv f01-title-prompt">$</span><span data-hf-id="hf-3kao" class="f01-title-rv"> </span><span data-hf-id="hf-3a20" class="f01-title-rv f01-title-cmd">cd</span><span data-hf-id="hf-0s5h" class="f01-title-rv"> </span><span data-hf-id="hf-3xu8" class="f01-title-rv f01-title-cmd">csuft-auto-checkin</span><span data-hf-id="hf-hrla" class="f01-title-caret" id="f01-title-caret-2"></span></div>
+        </div>
+
+        <!-- supporting: index kicker · display title · warning line -->
+        <div data-hf-id="hf-b92z" class="f01-title-kicker" id="f01-title-kicker">仅供学习使用</div>
+        <div data-hf-id="hf-t5lu" class="f01-title-rule" id="f01-title-rule"></div>
+        <div data-hf-id="hf-qyma" class="f01-title-name" id="f01-title-name"><span data-hf-id="hf-e0vo" class="f01-title-ch">平</span><span data-hf-id="hf-vjua" class="f01-title-ch">安</span><span data-hf-id="hf-fez8" class="f01-title-ch">打</span><span data-hf-id="hf-7wtm" class="f01-title-ch">卡</span><span data-hf-id="hf-itz3" class="f01-title-ch">自</span><span data-hf-id="hf-2c6d" class="f01-title-ch">动</span><span data-hf-id="hf-nsf7" class="f01-title-ch">签</span><span data-hf-id="hf-dxm5" class="f01-title-ch">到</span></div>
+        <div data-hf-id="hf-ndhm" class="f01-title-warn" id="f01-title-warn">使用前请先读完免责声明</div>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var root = document.getElementById("root");
+      if (!root || typeof gsap === "undefined") return;
+
+      function grab(id) { return document.getElementById(id); }
+      function runsIn(el) {
+        return el ? Array.prototype.slice.call(el.querySelectorAll("span")) : [];
+      }
+
+      var cam = grab("f01-title-cam");
+      var term = grab("f01-title-term");
+      var ln1 = grab("01-title-ln1");
+      var ln2 = grab("01-title-ln2");
+      var c1 = grab("01-title-caret-1");
+      var c2 = grab("01-title-caret-2");
+      var kicker = grab("f01-title-kicker");
+      var rule = grab("f01-title-rule");
+      var name = grab("f01-title-name");
+      var warn = grab("f01-title-warn");
+
+      var runs1 = runsIn(ln1);
+      var runs2 = runsIn(ln2);
+      var chars = name ? Array.prototype.slice.call(name.querySelectorAll(".f01-title-ch")) : [];
+
+      /* Starting states: every entrance is a fromTo, and the typed runs start dark so t=0 shows the
+         terminal chrome alone — exactly what Scene 1 asks for. */
+      gsap.set([kicker, warn], { opacity: 0 });
+      gsap.set(cam, { scale: 1.016, y: -50 });
+      gsap.set(term, { opacity: 0 });
+      gsap.set(rule, { scaleX: 0 });
+      gsap.set(c1, { opacity: 0 });
+      gsap.set(c2, { opacity: 0 });
+      gsap.set(runs1, { opacity: 0, y: 0 });
+      gsap.set(runs2, { opacity: 0, y: 0 });
+      gsap.set(chars, { opacity: 0, y: 20 });
+
+      var tl = gsap.timeline({ paused: true });
+
+      /* ---- Scene 1 (0.0-2.0s) — the dark terminal alone on the empty cream field.
+         Caret #1 blinks its idle rhythm; the macro camera drifts (its vertical recenter rides in
+         every camera tween, so no CSS transform is ever fought over). ---- */
+      tl.fromTo(term, { opacity: 0, y: -10 }, { opacity: 1, y: 0, duration: 0.55, ease: "power2.out" }, 0.10);
+      tl.to(cam, { scale: 1.006, y: -50, duration: 7.30, ease: "power1.out" }, 0);
+      tl.set(c1, { opacity: 1 }, 0.40);
+      tl.set(c1, { opacity: 0 }, 0.72);
+      tl.set(c1, { opacity: 1 }, 1.04);
+      tl.set(c1, { opacity: 0 }, 1.36);
+      tl.set(c1, { opacity: 1 }, 1.68);
+
+      /* ---- Scene 2 (2.0-5.2s) — both command lines type on, run by run, on the beat.
+         One cursor at a time: caret #1 goes solid and rides line 1's frontier, then hides; caret #2
+         blinks, then rides line 2's frontier, then goes back to blinking. ---- */
+      tl.to(c1, { opacity: 1, duration: 0.10, ease: "none" }, 1.98);
+      /* 7 runs x 0.20s stagger + 0.26s = line 1 is fully on at ~3.51s, just before the caret hides */
+      tl.fromTo(runs1,
+        { opacity: 0 },
+        { opacity: 1, duration: 0.26, ease: "steps(5)", stagger: { each: 0.20, from: "start" } }, 2.05);
+      tl.to(c1, { opacity: 0, duration: 0.12, ease: "none" }, 3.60);
+
+      tl.fromTo(c2, { opacity: 0 }, { opacity: 1, duration: 0.20, ease: "none" }, 3.82);
+      tl.set(c2, { opacity: 0 }, 4.14);
+      tl.set(c2, { opacity: 1 }, 4.44);
+      /* 5 runs x 0.18s stagger + 0.22s = line 2 is fully on at ~5.44s, before the blink resumes */
+      tl.fromTo(runs2,
+        { opacity: 0 },
+        { opacity: 1, duration: 0.22, ease: "steps(4)", stagger: { each: 0.18, from: "start" } }, 4.68);
+      tl.set(c2, { opacity: 1 }, 5.50);
+      tl.set(c2, { opacity: 0 }, 5.68);
+      tl.set(c2, { opacity: 1 }, 5.94);
+      tl.set(c2, { opacity: 0 }, 6.20);
+      tl.set(c2, { opacity: 1 }, 6.46);
+
+      /* ---- Scene 3 (5.2-8.0s) — the kicker and the display title rise out from under the panel;
+         impact-bass-1 lands with the title settle at ~6.15s. ---- */
+      tl.fromTo(kicker, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.50, ease: "power2.out" }, 5.30);
+      tl.fromTo(rule, { scaleX: 0, opacity: 0 }, { scaleX: 1, opacity: 1, duration: 0.55, ease: "power2.out" }, 6.00);
+      tl.fromTo(name, { scale: 1.026 }, { scale: 1, duration: 1.00, ease: "power2.out" }, 6.14);
+      tl.fromTo(chars,
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.60, ease: "power2.out", stagger: { each: 0.048, from: "start" } }, 6.14);
+
+      /* ---- Scene 4 (8.0-11.0s) — the warning line fades in, the caret stops blinking, and the
+         finished composition is held for the read: no displacement after this point. ---- */
+      tl.fromTo(warn, { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.75, ease: "power2.out" }, 8.20);
+      tl.set(c2, { opacity: 1 }, 8.00);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["01-title"] = tl;
+    })();
+  </script>
+</template>

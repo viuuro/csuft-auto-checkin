@@ -1,0 +1,502 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>csuft-auto-checkin 介绍视频 — 分镜草图 v1</title>
+<style>
+  @font-face{font-family:"EB Garamond";src:url("assets/fonts/EBGaramond-400.woff2") format("woff2");font-weight:400;font-display:swap}
+  @font-face{font-family:"EB Garamond";src:url("assets/fonts/EBGaramond-700.woff2") format("woff2");font-weight:700;font-display:swap}
+  @font-face{font-family:"Inter";src:url("assets/fonts/Inter-400.woff2") format("woff2");font-weight:400;font-display:swap}
+  @font-face{font-family:"Inter";src:url("assets/fonts/Inter-700.woff2") format("woff2");font-weight:700;font-display:swap}
+  @font-face{font-family:"JetBrains Mono";src:url("assets/fonts/JetBrainsMono-400.woff2") format("woff2");font-weight:400;font-display:swap}
+  @font-face{font-family:"JetBrains Mono";src:url("assets/fonts/JetBrainsMono-700.woff2") format("woff2");font-weight:700;font-display:swap}
+
+  :root{
+    --ink:#141413; --cream:#FAF9F5; --tile:#EFE9DE; --tile-strong:#ECE3D4;
+    --coral:#CC785C; --navy:#181715; --navy-soft:#1F1E1B; --navy-elev:#252320;
+    --teal:#5DB8A6; --amber:#E8A55A; --ok:#5DB872; --warn:#C64545;
+    --hair:color-mix(in srgb, #141413 12%, transparent);
+    --hair-navy:color-mix(in srgb, #FAF9F5 14%, transparent);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;padding:40px 32px 72px;background:var(--cream);color:var(--ink);
+    font-family:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ---------- header ---------- */
+  header{max-width:1560px;margin:0 auto 34px}
+  .kicker{
+    font-family:"JetBrains Mono",monospace;font-size:12px;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--coral);margin:0 0 14px
+  }
+  .kicker::before{content:"✱ "}
+  h1{
+    font-family:"EB Garamond",serif;font-weight:400;font-size:clamp(30px,3.4vw,50px);
+    line-height:1.08;letter-spacing:-.022em;margin:0 0 12px;max-width:22ch
+  }
+  .dek{font-size:16px;line-height:1.6;color:color-mix(in srgb,var(--ink) 72%,transparent);max-width:76ch;margin:0 0 18px}
+  .tags{display:flex;flex-wrap:wrap;gap:8px}
+  .tag{
+    font-family:"JetBrains Mono",monospace;font-size:11.5px;letter-spacing:.04em;
+    background:var(--tile);border:1px solid var(--hair);border-radius:9999px;padding:6px 13px
+  }
+  .tag.accent{background:var(--coral);border-color:var(--coral);color:var(--cream)}
+
+  /* ---------- act bar ---------- */
+  .acts{max-width:1560px;margin:0 auto 18px;display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .act{
+    border-top:2px solid var(--ink);padding-top:10px;
+    font-family:"JetBrains Mono",monospace;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase
+  }
+  .act b{display:block;font-family:"EB Garamond",serif;font-size:19px;font-weight:400;
+    letter-spacing:-.01em;text-transform:none;margin-top:3px}
+  .act span{color:color-mix(in srgb,var(--ink) 55%,transparent)}
+
+  /* ---------- grid ---------- */
+  .grid{max-width:1560px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:26px 22px}
+  .cell{display:flex;flex-direction:column;gap:9px;min-width:0}
+  .stage{
+    aspect-ratio:16/9;container-type:inline-size;position:relative;overflow:hidden;
+    border:1px solid var(--hair);border-radius:8px;background:var(--cream)
+  }
+  .stage.dark{background:var(--navy)}
+  .inner{position:absolute;inset:0;padding:6cqw;display:flex;flex-direction:column}
+
+  .label{
+    display:flex;justify-content:space-between;align-items:baseline;gap:10px;
+    font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.06em
+  }
+  .label .n{text-transform:uppercase}
+  .label .id{color:color-mix(in srgb,var(--ink) 48%,transparent)}
+  .note{font-size:13.5px;line-height:1.55;margin:0;color:color-mix(in srgb,var(--ink) 80%,transparent)}
+  .note b{font-weight:700}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:2px}
+  .chip{
+    font-family:"JetBrains Mono",monospace;font-size:10.5px;letter-spacing:.04em;
+    border:1px solid var(--hair);border-radius:9999px;padding:3px 9px;
+    color:color-mix(in srgb,var(--ink) 66%,transparent)
+  }
+  .chip.c{border-color:var(--coral);color:var(--coral)}
+
+  /* ---------- sketch atoms (match the build: cqw sizing) ---------- */
+  .mono{font-family:"JetBrains Mono",monospace}
+  .serif{font-family:"EB Garamond",serif;font-weight:400;letter-spacing:-.022em;line-height:1.06}
+  .idx{font-family:"JetBrains Mono",monospace;font-size:1.5cqw;letter-spacing:.16em;text-transform:uppercase;color:var(--coral)}
+  .idx::before{content:"✱ "}
+  .display{font-size:8.4cqw}
+  .headline{font-size:4.6cqw}
+  .body{font-family:"Inter",sans-serif;font-size:1.72cqw;line-height:1.5;
+    color:color-mix(in srgb,var(--ink) 78%,transparent)}
+  .rule{height:1px;background:var(--hair);margin:2.6cqw 0}
+
+  /* terminal */
+  .term{
+    background:var(--navy-elev);border-radius:8px;padding:3.2cqw 3.6cqw;
+    border:1px solid var(--hair-navy);flex:1;display:flex;flex-direction:column;gap:1.5cqw
+  }
+  .term .bar{display:flex;gap:.9cqw;margin-bottom:.4cqw}
+  .term .dot{width:1.1cqw;height:1.1cqw;border-radius:9999px;background:color-mix(in srgb,#FAF9F5 22%,transparent)}
+  .term .ln{font-family:"JetBrains Mono",monospace;font-size:1.44cqw;color:#FAF9F5;line-height:1.65}
+  .term .ln .p{color:var(--teal)} .term .ln .k{color:var(--coral)} .term .ln .n{color:var(--amber)}
+  .caret{display:inline-block;width:.7cqw;height:1.7cqw;background:var(--coral);vertical-align:-.25cqw}
+
+  /* doc list */
+  .docrow{display:grid;grid-template-columns:7cqw 1fr;gap:2.4cqw;align-items:start}
+  .docnum{font-family:"JetBrains Mono",monospace;font-size:2.5cqw;color:var(--coral);line-height:1}
+  .doctitle{font-size:2.5cqw;letter-spacing:-.012em}
+  .doclist{margin:1cqw 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:.75cqw}
+  .doclist li{font-family:"Inter",sans-serif;font-size:1.62cqw;line-height:1.45;
+    color:color-mix(in srgb,var(--ink) 76%,transparent);padding-left:2.1cqw;position:relative}
+  .doclist li::before{content:"—";position:absolute;left:0;color:color-mix(in srgb,var(--ink) 34%,transparent)}
+
+  /* two columns */
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:3.4cqw;flex:1}
+  .card{
+    background:var(--tile);border:1px solid var(--hair);border-radius:8px;
+    padding:2.6cqw;display:flex;flex-direction:column;gap:1.2cqw
+  }
+  .card .h{font-size:2.15cqw;letter-spacing:-.01em}
+  .card .sub{font-family:"JetBrains Mono",monospace;font-size:1.2cqw;color:color-mix(in srgb,var(--ink) 52%,transparent)}
+  .card ul{margin:.4cqw 0 0;padding-left:2.1cqw;font-family:"Inter",sans-serif;
+    font-size:1.42cqw;line-height:1.55;color:color-mix(in srgb,var(--ink) 78%,transparent)}
+
+  /* timeline */
+  .tl{position:relative;height:1px;background:color-mix(in srgb,var(--ink) 26%,transparent);margin:auto 0 0}
+  .tl .tick{position:absolute;top:-.55cqw;width:1px;height:1.1cqw;background:color-mix(in srgb,var(--ink) 34%,transparent)}
+  .tl .lbl{position:absolute;top:1.1cqw;font-family:"JetBrains Mono",monospace;font-size:1.2cqw;
+    color:color-mix(in srgb,var(--ink) 56%,transparent)}
+  .tl .mark{position:absolute;top:-1.5cqw;width:3cqw;height:3cqw;border-radius:9999px;background:var(--coral)}
+  .tl .mtime{position:absolute;top:-5.2cqw;font-family:"JetBrains Mono",monospace;font-size:1.5cqw;color:var(--coral)}
+
+  /* AS-IS ring */
+  .asis{position:relative;flex:1;display:grid;place-items:center}
+  .asis .big{font-family:"JetBrains Mono",monospace;font-size:8.6cqw;letter-spacing:.06em}
+  .bubble{
+    position:absolute;background:var(--tile);border:1px solid var(--hair);border-radius:9999px;
+    padding:.7cqw 1.6cqw;font-family:"Inter",sans-serif;font-size:1.28cqw;
+    color:color-mix(in srgb,#141413 80%,transparent);white-space:nowrap
+  }
+
+  /* distance diagram */
+  .diagram{position:relative;flex:1;display:flex;align-items:center;justify-content:center}
+  .pt{width:2.2cqw;height:2.2cqw;border-radius:9999px;background:var(--coral);position:absolute}
+  .pt2{width:2.2cqw;height:2.2cqw;border-radius:9999px;border:2px solid var(--coral);position:absolute;margin-left:-1.6cqw;margin-top:-1.6cqw}
+  .dim{position:absolute;height:1px;background:color-mix(in srgb,var(--ink) 30%,transparent);width:14cqw}
+  .dimlbl{position:absolute;font-family:"JetBrains Mono",monospace;font-size:1.5cqw;color:var(--coral)}
+
+  /* seam map + tokens cells */
+  .wide{grid-column:1/-1}
+  .seams{display:flex;flex-wrap:wrap;gap:0;align-items:stretch;border:1px solid var(--hair);border-radius:8px;overflow:hidden}
+  .seam{flex:1 1 0;min-width:0;padding:13px 12px;display:flex;flex-direction:column;gap:6px;
+    border-right:1px solid var(--hair)}
+  .seam:last-child{border-right:0}
+  .seam .s-n{font-family:"JetBrains Mono",monospace;font-size:10.5px;color:var(--coral)}
+  .seam .s-t{font-size:12.5px;line-height:1.4}
+  .tok{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:20px}
+  .sw{display:flex;align-items:center;gap:10px;font-family:"JetBrains Mono",monospace;font-size:11.5px}
+  .sw i{width:26px;height:26px;border-radius:6px;border:1px solid var(--hair);display:block;flex:none}
+  .tok h4{margin:0 0 9px;font-family:"JetBrains Mono",monospace;font-size:11px;
+    letter-spacing:.14em;text-transform:uppercase;color:color-mix(in srgb,var(--ink) 55%,transparent)}
+  .tok ul{margin:0;padding-left:16px;font-size:12.5px;line-height:1.7}
+</style>
+</head>
+<body>
+
+<header>
+  <p class="kicker">Storyboard v1 · 分镜草图</p>
+  <h1>中南林学工自动签到 —— 项目介绍视频</h1>
+  <p class="dek">
+    一支 16:9 无声讲解片。前 4 帧只讲免责声明（约 72 秒），后 5 帧讲功能与部署（约 69 秒）。
+    信息全靠画面与字幕承载，配轻量音效，不配旁白与背景音乐。
+  </p>
+  <div class="tags">
+    <span class="tag accent">1920×1080</span>
+    <span class="tag">约 130 秒</span>
+    <span class="tag">9 帧</span>
+    <span class="tag">无旁白</span>
+    <span class="tag">无 BGM</span>
+    <span class="tag">14 个音效</span>
+    <span class="tag">设计预设 code-editorial</span>
+  </div>
+</header>
+
+<div class="acts">
+  <div class="act">Act 1 · 0:00 – 1:12<span><b>免责声明</b></span></div>
+  <div class="act">Act 2 · 1:12 – 1:55<span><b>功能与用法</b></span></div>
+  <div class="act">Act 3 · 1:55 – 2:10<span><b>部署与收尾</b></span></div>
+</div>
+
+<div class="grid">
+
+  <!-- ============ 01 ============ -->
+  <div class="cell" id="frame-01">
+    <div class="stage dark">
+      <div class="inner" style="justify-content:center;gap:3.4cqw">
+        <div class="term">
+          <div class="bar"><i class="dot"></i><i class="dot"></i><i class="dot"></i></div>
+          <div class="ln"><span class="p">$</span> <span class="k">git</span> clone .../csuft-auto-checkin</div>
+          <div class="ln"><span class="p">$</span> <span class="k">cd</span> csuft-auto-checkin <span class="caret"></span></div>
+        </div>
+        <div>
+          <div class="idx" style="color:var(--amber)">仅供学习使用</div>
+          <div class="serif display" style="color:var(--cream);margin-top:1.4cqw">平安打卡自动签到</div>
+          <div class="body" style="color:color-mix(in srgb,#FAF9F5 72%,transparent);margin-top:1.6cqw;font-size:1.62cqw">
+            使用前请先读完免责声明
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="label"><span class="n">01 · 开场与片名</span><span class="id">0:00 – 0:11</span></div>
+    <p class="note"><b>先动：</b>终端里标题逐字打出，随后标题与警示行淡入。光标先闪两下。接缝向右 crossfade。</p>
+    <div class="chips"><span class="chip c">typing</span><span class="chip c">impact-bass-1</span><span class="chip">cut 入场</span></div>
+  </div>
+
+  <!-- ============ 02 ============ -->
+  <div class="cell" id="frame-02">
+    <div class="stage">
+      <div class="inner" style="justify-content:center">
+        <div class="idx">免责声明 01 / 07</div>
+        <div class="docrow" style="margin-top:3.4cqw">
+          <div class="docnum">01</div>
+          <div>
+            <div class="serif doctitle">与学校无关</div>
+            <ul class="doclist">
+              <li>本项目与任何学校、任何第三方服务提供商均无关联</li>
+              <li>未获得其授权、认可或支持</li>
+              <li>项目作者不是上述机构的代表</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="label"><span class="n">02 · 免责 1 · 与学校无关</span><span class="id">0:11 – 0:26</span></div>
+    <p class="note"><b>先动：</b>编号先落位，标题跟上，三条说明每 1.5 秒依次淡入。接缝向右 crossfade。</p>
+    <div class="chips"><span class="chip c">click-soft</span><span class="chip">crossfade 0.5s</span></div>
+  </div>
+
+  <!-- ============ 03 ============ -->
+  <div class="cell" id="frame-03">
+    <div class="stage">
+      <div class="inner" style="justify-content:center">
+        <div class="idx">免责声明 02 · 03 / 07</div>
+        <div class="two" style="margin-top:3.4cqw">
+          <div>
+            <div class="docnum">02</div>
+            <div class="serif doctitle" style="margin-top:1.2cqw">可能违反校规</div>
+            <ul class="doclist">
+              <li>「代打卡」在多数高校的学生管理规定中可能被认定为<span style="color:var(--coral);font-weight:700">违纪行为</span></li>
+              <li>可能导致<span style="color:var(--coral);font-weight:700">纪律处分</span></li>
+            </ul>
+          </div>
+          <div>
+            <div class="docnum">03</div>
+            <div class="serif doctitle" style="margin-top:1.2cqw">遵守法律法规</div>
+            <ul class="doclist">
+              <li>网络安全法 · 数据安全法 · 个人信息保护法</li>
+              <li>以及所在司法辖区的相关法律</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="label"><span class="n">03 · 免责 2 · 校规与法律</span><span class="id">0:26 – 0:41</span></div>
+    <p class="note"><b>先动：</b>左栏 02 先入场，右栏 03 延后 1.2 秒。两处强调词最后加重。接缝向右 crossfade。</p>
+    <div class="chips"><span class="chip c">click-soft</span><span class="chip">全片唯一强对比处</span></div>
+  </div>
+
+  <!-- ============ 04 ============ -->
+  <div class="cell" id="frame-04">
+    <div class="stage">
+      <div class="inner" style="justify-content:center">
+        <div class="idx">免责声明 05 / 07</div>
+        <div class="serif headline" style="margin-top:2.6cqw">坐标不代表真实位置</div>
+        <div class="diagram">
+          <div class="dim" style="left:32%"></div>
+          <div class="dimlbl" style="left:44%;top:44%">0 m</div>
+          <div class="pt" style="left:30%"></div>
+          <div class="pt2" style="left:47%"></div>
+          <div class="mono" style="position:absolute;left:22%;top:62%;font-size:1.3cqw;color:color-mix(in srgb,#141413 58%,transparent)">宿舍基准点</div>
+          <div class="mono" style="position:absolute;left:47%;top:62%;font-size:1.3cqw;color:color-mix(in srgb,#141413 58%,transparent)">提交坐标</div>
+        </div>
+        <div class="body" style="font-size:1.5cqw">提交的是学校自己登记的宿舍基准点，使定位校验距离为 0 米</div>
+      </div>
+    </div>
+    <div class="label"><span class="n">04 · 免责 3 · 定位机制</span><span class="id">0:41 – 0:57</span></div>
+    <p class="note"><b>先动：</b>示意图先画（基准点 → 引线 → 0 m），结论句最后落定。接缝向右 crossfade。</p>
+    <div class="chips"><span class="chip c">ping</span><span class="chip">不辩解、不美化</span></div>
+  </div>
+
+  <!-- ============ 05 ============ -->
+  <div class="cell" id="frame-05">
+    <div class="stage">
+      <div class="inner" style="justify-content:center">
+        <div class="idx">免责声明 06 · 07 / 07</div>
+        <div class="asis">
+          <div class="big">AS&nbsp;IS</div>
+          <div class="bubble" style="top:4%;left:2%">不保证接口不变更</div>
+          <div class="bubble" style="top:4%;right:2%">不保证签到一定成功</div>
+          <div class="bubble" style="bottom:12%;left:2%">不保证服务可用</div>
+          <div class="bubble" style="bottom:12%;right:2%">不保证数据不丢失</div>
+        </div>
+        <div class="body" style="font-size:1.44cqw;text-align:center;margin-top:1.4cqw">
+          在适用法律允许的最大范围内，作者不承担任何责任
+        </div>
+      </div>
+    </div>
+    <div class="label"><span class="n">05 · 免责 4 · 按现状提供</span><span class="id">0:57 – 1:12</span></div>
+    <p class="note"><b>先动：</b>中央 AS IS 先立住，四条「不保证」向四个方向错开 0.8 秒入场，底部责任行收尾。本帧末有一次明显停顿。</p>
+    <div class="chips"><span class="chip c">click-soft</span><span class="chip">留白停顿</span></div>
+  </div>
+
+  <!-- ============ 06 ============ -->
+  <div class="cell" id="frame-06">
+    <div class="stage">
+      <div class="inner" style="justify-content:center">
+        <div class="idx">它由两部分组成</div>
+        <div class="two" style="margin-top:3cqw">
+          <div class="card">
+            <div class="mono sub">用户网页&nbsp;&nbsp;/</div>
+            <div class="serif h">提交申请，等管理员批准</div>
+            <ul><li>绑定学校打卡账号</li><li>每天自动签到</li><li>日历看板查看自己的记录</li></ul>
+          </div>
+          <div class="card">
+            <div class="mono sub">管理员网页&nbsp;&nbsp;/admin</div>
+            <div class="serif h">有且仅有管理员本人可登录</div>
+            <ul><li>亲自审批每一个申请</li><li>成员管理与手动签到</li><li>运行监控与日志</li></ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="label"><span class="n">06 · 它能做什么</span><span class="id">1:12 – 1:27</span></div>
+    <p class="note"><b>先动：</b>两卡片从下方 16px 上移入场，先左后右；要点逐条 pop-in。接缝向右 crossfade。</p>
+    <div class="chips"><span class="chip c">pop</span><span class="chip c">click-soft</span></div>
+  </div>
+
+  <!-- ============ 07 ============ -->
+  <div class="cell" id="frame-07">
+    <div class="stage">
+      <div class="inner" style="justify-content:center">
+        <div class="idx">每天怎么跑</div>
+        <div class="serif headline" style="margin-top:2.2cqw">在 21:00 – 22:30 之间随机执行</div>
+        <div style="padding:0 3cqw;margin-top:5cqw">
+          <div class="tl">
+            <div class="tick" style="left:0"></div>
+            <div class="lbl" style="left:0">21:00</div>
+            <div class="tick" style="left:100%"></div>
+            <div class="lbl" style="left:88%">22:30</div>
+            <div class="mark" style="left:44%"></div>
+            <div class="mtime" style="left:40%">21:47</div>
+          </div>
+        </div>
+        <div class="body" style="margin-top:2.6cqw">跟随学校任务的打卡期间 —— 自动覆盖寒暑假，留校也照常打卡</div>
+      </div>
+    </div>
+    <div class="label"><span class="n">07 · 一天的流程</span><span class="id">1:27 – 1:40</span></div>
+    <p class="note"><b>先动：</b>时间轴先画，标记在随机位置落下并亮起，随后下方展开「覆盖寒暑假」说明。接缝向右 crossfade。</p>
+    <div class="chips"><span class="chip c">whoosh-short</span><span class="chip c">chime</span></div>
+  </div>
+
+  <!-- ============ 08 ============ -->
+  <div class="cell" id="frame-08">
+    <div class="stage">
+      <div class="inner" style="justify-content:center">
+        <div class="idx">两种部署方式</div>
+        <div class="two" style="margin-top:2.6cqw">
+          <div>
+            <div class="mono sub" style="font-size:1.3cqw;color:color-mix(in srgb,#141413 52%,transparent)">本地</div>
+            <div class="term" style="margin-top:1.2cqw;padding:2.2cqw">
+              <div class="ln" style="font-size:1.2cqw"><span class="p">$</span> pip install -r requirements.txt</div>
+              <div class="ln" style="font-size:1.2cqw"><span class="p">$</span> python run.py <span class="caret" style="height:1.4cqw"></span></div>
+            </div>
+            <div class="body" style="font-size:1.24cqw;margin-top:1.2cqw">两行命令，打开 /admin 设置管理员</div>
+          </div>
+          <div>
+            <div class="mono sub" style="font-size:1.3cqw;color:color-mix(in srgb,#141413 52%,transparent)">云服务器</div>
+            <div class="term" style="margin-top:1.2cqw;padding:2.2cqw">
+              <div class="ln" style="font-size:1.12cqw"><span class="p">$</span> <span class="k">python</span> tools/deploy_remote.py \</div>
+              <div class="ln" style="font-size:1.12cqw">&nbsp;&nbsp;&nbsp;&nbsp;--host <span class="n">&lt;服务器&gt;</span> --user root</div>
+            </div>
+            <div class="body" style="font-size:1.24cqw;margin-top:1.2cqw">
+              预检 → 上传 → 装依赖 → 配 systemd → 启动验证<br>
+              服务器需在<b>中国大陆</b> · 时区 Asia/Shanghai
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="label"><span class="n">08 · 部署：本地与云</span><span class="id">1:40 – 1:56</span></div>
+    <p class="note"><b>先动：</b>左栏命令先出现，右栏命令逐字敲出（typing），随后三条前提要点浮出。接缝向右 crossfade。</p>
+    <div class="chips"><span class="chip c">typing</span><span class="chip c">key-press</span></div>
+  </div>
+
+  <!-- ============ 09 ============ -->
+  <div class="cell" id="frame-09">
+    <div class="stage">
+      <div class="inner" style="justify-content:center">
+        <div class="idx">也可以交给 AI 来部署</div>
+        <div class="two" style="margin-top:2.6cqw;align-items:center">
+          <div>
+            <div class="bubble" style="position:static;display:inline-block;border-radius:12px;padding:1.4cqw 1.8cqw;font-size:1.34cqw">
+              帮我把这个仓库部署到服务器
+            </div>
+            <div class="body" style="font-size:1.34cqw;margin-top:1.6cqw">
+              仓库文档齐全、命令固定，可直接交给 AI 编程助手。它还带一套自检脚本：
+            </div>
+          </div>
+          <div>
+            <div class="term" style="padding:2.2cqw">
+              <div class="ln" style="font-size:1.2cqw"><span class="p">$</span> python tools/verify_all.py</div>
+              <div class="ln" style="font-size:1.2cqw"><span class="p">$</span> python tools/check_server_sync.py</div>
+              <div class="ln" style="font-size:1.2cqw"><span class="p">$</span> python tools/audit_privacy.py</div>
+              <div class="ln" style="font-size:1.2cqw"><span class="p">$</span> python tools/preflight.py --online</div>
+            </div>
+          </div>
+        </div>
+        <div class="rule"></div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:2cqw">
+          <div class="serif" style="font-size:3cqw">csuft-auto-checkin</div>
+          <div class="mono" style="font-size:1.2cqw;color:var(--coral)">使用前请先读完免责声明</div>
+        </div>
+      </div>
+    </div>
+    <div class="label"><span class="n">09 · AI 辅助部署与收尾</span><span class="id">1:56 – 2:10</span></div>
+    <p class="note"><b>先动：</b>对话气泡先出，四个自检命令逐条敲入，最后回到片名与仓库地址收尾。首尾呼应。</p>
+    <div class="chips"><span class="chip c">pop</span><span class="chip c">chime</span><span class="chip">收尾呼应</span></div>
+  </div>
+
+  <!-- ============ seam map ============ -->
+  <div class="cell wide">
+    <div class="label"><span class="n">接缝图 · 全片转场</span><span class="id">统一向右 crossfade 0.5s</span></div>
+    <div class="seams">
+      <div class="seam"><span class="s-n">01 → 02</span><span class="s-t">cut 冷开场后<br>首次柔化</span></div>
+      <div class="seam"><span class="s-n">02 → 03</span><span class="s-t">同版式续接<br>免责条文累加</span></div>
+      <div class="seam"><span class="s-n">03 → 04</span><span class="s-t">文字 → 示意图<br>信息形态切换</span></div>
+      <div class="seam"><span class="s-n">04 → 05</span><span class="s-t">收束免责<br>AS IS 立住</span></div>
+      <div class="seam"><span class="s-n">05 → 06</span><span class="s-t">语气切换点<br>风险 → 功能</span></div>
+      <div class="seam"><span class="s-n">06 → 07</span><span class="s-t">结构 → 时间<br>静态 → 动态</span></div>
+      <div class="seam"><span class="s-n">07 → 08</span><span class="s-t">进入实操<br>命令登场</span></div>
+      <div class="seam"><span class="s-n">08 → 09</span><span class="s-t">实操 → 收尾<br>回到片名</span></div>
+    </div>
+  </div>
+
+  <!-- ============ tokens ============ -->
+  <div class="cell wide">
+    <div class="label"><span class="n">设计令牌</span><span class="id">code-editorial 预设</span></div>
+    <div class="tok">
+      <div>
+        <h4>主色</h4>
+        <div class="sw"><i style="background:#141413"></i>ink #141413</div>
+        <div class="sw"><i style="background:#FAF9F5"></i>cream #FAF9F5</div>
+        <div class="sw"><i style="background:#EFE9DE"></i>tile #EFE9DE</div>
+        <div class="sw"><i style="background:#ECE3D4"></i>tile-strong #ECE3D4</div>
+      </div>
+      <div>
+        <h4>重点与代码面</h4>
+        <div class="sw"><i style="background:#CC785C"></i>coral #CC785C（唯一强调色）</div>
+        <div class="sw"><i style="background:#181715"></i>navy #181715</div>
+        <div class="sw"><i style="background:#252320"></i>navy-elev #252320（代码面）</div>
+        <div class="sw"><i style="background:#5DB8A6"></i>teal #5DB8A6（语法）</div>
+      </div>
+      <div>
+        <h4>字体</h4>
+        <ul>
+          <li><b style="font-family:'EB Garamond',serif;font-size:15px">EB Garamond</b> — 标题与数字（句首大写，不用全大写）</li>
+          <li><b>Inter</b> — 正文（≥1.4cqw）</li>
+          <li><b style="font-family:'JetBrains Mono',monospace">JetBrains Mono</b> — 索引标签与控制符（全大写 0.16em）</li>
+        </ul>
+      </div>
+      <div>
+        <h4>禁令</h4>
+        <ul>
+          <li>不用红黄警示色</li>
+          <li>不用纯白 / 纯黑 / 冷灰</li>
+          <li>不用发光、重投影、倾斜</li>
+          <li>不做幻灯片式（每拍换一张新卡）</li>
+          <li>不做屏保式（无意义动效）</li>
+          <li>coral 每帧只出现一次重点</li>
+        </ul>
+      </div>
+      <div>
+        <h4>圆角与层级</h4>
+        <ul>
+          <li>6px 小组件 · 8px 卡片 · 12px 大块 · 9999px 胶囊</li>
+          <li>1px hairline ink@12% 作为主要分层</li>
+          <li>半阶色块（tile）代替投影</li>
+        </ul>
+      </div>
+      <div>
+        <h4>音效（已解析 14 条）</h4>
+        <ul>
+          <li>typing · impact-bass-1 · key-press</li>
+          <li>click-soft · pop · ping</li>
+          <li>chime · whoosh-short</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

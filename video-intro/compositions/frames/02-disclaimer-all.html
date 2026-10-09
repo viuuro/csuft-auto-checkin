@@ -1,0 +1,252 @@
+<template>
+<style>
+  @font-face{font-family:"EB Garamond";src:url("assets/fonts/EBGaramond-400.woff2") format("woff2");font-weight:400;font-display:block}
+  @font-face{font-family:"EB Garamond";src:url("assets/fonts/EBGaramond-700.woff2") format("woff2");font-weight:700;font-display:block}
+  @font-face{font-family:"Inter";src:url("assets/fonts/Inter-400.woff2") format("woff2");font-weight:400;font-display:block}
+  @font-face{font-family:"Inter";src:url("assets/fonts/Inter-700.woff2") format("woff2");font-weight:700;font-display:block}
+  @font-face{font-family:"JetBrains Mono";src:url("assets/fonts/JetBrainsMono-400.woff2") format("woff2");font-weight:400;font-display:block}
+  @font-face{font-family:"JetBrains Mono";src:url("assets/fonts/JetBrainsMono-700.woff2") format("woff2");font-weight:700;font-display:block}
+  @font-face{font-family:"Noto Serif SC";src:url("assets/fonts/NotoSerifSC-400.woff2") format("woff2");font-weight:400;font-display:block}
+  @font-face{font-family:"Noto Sans SC";src:url("assets/fonts/NotoSansSC-400.woff2") format("woff2");font-weight:400;font-display:block}
+  @font-face{font-family:"Noto Sans SC";src:url("assets/fonts/NotoSansSC-700.woff2") format("woff2");font-weight:700;font-display:block}
+
+  /* ---- palette (light / code-editorial) ---- */
+  /* ---- frame root: sized to the 1920x1080 canvas, styled via #root (never a class) ---- */
+  #root{
+    position:relative;
+    width:1920px; height:1080px;
+    overflow:hidden;
+    font-family:"Inter","Noto Sans SC",sans-serif;
+  }
+
+  .f02-disclaimer-all-ground{
+    position:absolute; inset:0; width:1920px; height:1080px;
+    background:#FAF9F5;
+    container-type:size;
+    overflow:hidden;
+  }
+
+  /* ---- content stage: the whole composition box (measured in cqw) ---- */
+  .f02-disclaimer-all-stage{
+    position:absolute; inset:0;
+    padding:4.83cqw 6cqw 6cqw 6cqw;
+    display:flex; flex-direction:column;
+    box-sizing:border-box;
+  }
+
+  /* ---- header ---- */
+  .f02-disclaimer-all-kicker{
+    font-family:"Inter","Noto Sans SC",sans-serif;
+    font-size:1.354cqw;      /* 26px */
+    font-weight:700;
+    letter-spacing:.09em;
+    color:#BF7056;
+    line-height:1.25;
+    visibility:hidden;
+    margin:0;
+  }
+  .f02-disclaimer-all-title{
+    font-family:"EB Garamond","Noto Serif SC",serif;
+    font-size:3.125cqw;      /* 60px */
+    font-weight:400;
+    letter-spacing:-.018em;
+    color:#141413;
+    line-height:1.08;
+    margin:.42cqw 0 0 0;
+    visibility:hidden;
+  }
+  .f02-disclaimer-all-rule{
+    height:1px;
+    background:rgba(20,20,19,.12);
+    margin-top:1.15cqw;
+    transform-origin:0 50%;
+    transform:scaleX(0);
+  }
+
+  /* ---- the clause grid: 3 columns x 3 rows ---- */
+  .f02-disclaimer-all-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    grid-template-rows:repeat(3,145px);   /* fits num + heading + 2-line body */
+    column-gap:3.4cqw;       /* 65.3px */
+    row-gap:2.92cqw;         /* 56.0px */
+    margin-top:1.46cqw;
+  }
+
+  .f02-disclaimer-all-cell{
+    position:relative;
+    background-color:#EFE9DE;
+    border-right:1px solid rgba(20,20,19,.12);
+    border-bottom:1px solid rgba(20,20,19,.12);
+    padding:.73cqw 1.04cqw .73cqw 1.04cqw;   /* 14 / 20 / 14 / 20 px */
+    box-sizing:border-box;
+    display:flex; flex-direction:column;
+    overflow:hidden;
+  }
+  /* column 3 has no right hairline, row 3 is the grid's last row */
+  .f02-disclaimer-all-cell:nth-child(3n){ border-right:none; }
+  .f02-disclaimer-all-cell:nth-child(n+7){ border-bottom:none; }
+
+  .f02-disclaimer-all-num{
+    font-family:"JetBrains Mono",monospace;
+    font-size:1.406cqw;      /* 27px */
+    font-weight:700;
+    line-height:1;
+    letter-spacing:.02em;
+    color:#BF7056;
+    visibility:hidden;
+    margin:0;
+  }
+  .f02-disclaimer-all-h{
+    font-family:"Inter","Noto Sans SC",sans-serif;
+    font-size:1.146cqw;      /* 22px */
+    font-weight:700;
+    line-height:1.22;
+    letter-spacing:.005em;
+    color:#141413;
+    visibility:hidden;
+    margin:.55cqw 0 0 0;
+  }
+  .f02-disclaimer-all-b{
+    font-family:"Inter","Noto Sans SC",sans-serif;
+    font-size:.911cqw;       /* 17.5px */
+    font-weight:400;
+    line-height:1.36;
+    letter-spacing:.004em;
+    color:color-mix(in srgb,#141413 76%,transparent);
+    visibility:hidden;
+    margin:.32cqw 0 0 0;
+  }
+  /* clause 2 — the only coral emphasis inside the grid */
+  .f02-disclaimer-all-em{
+    color:#BF7056;
+    font-weight:700;
+    font-size:1.016cqw;      /* 19.5px, a step up from 17.5px */
+  }
+
+  /* ---- footer conclusion: below the grid, over a full-width hairline ---- */
+  .f02-disclaimer-all-footer{
+    border-top:1px solid rgba(20,20,19,.12);
+    margin:.94cqw 0 0 0;
+    padding-top:.68cqw;
+    font-family:"Inter","Noto Sans SC",sans-serif;
+    font-size:.807cqw;       /* 15.5px */
+    font-weight:400;
+    line-height:1.6;
+    letter-spacing:.004em;
+    color:color-mix(in srgb,#141413 62%,transparent);
+    visibility:hidden;
+  }
+
+  /* ---- GSAP-entrance start states, authored in CSS so no visibility flash ---- */
+  /* (every one of these is released by its own single fromTo below) */
+</style>
+
+<div id="root" data-composition-id="02-disclaimer-all" data-width="1920" data-height="1080" data-duration="32.5">
+  <!-- track 0: full-bleed cream ground -->
+  <div class="clip f02-disclaimer-all-ground"
+       data-start="0" data-duration="32.5" data-track-index="0"></div>
+
+  <!-- track 1: content stage -->
+  <div class="clip f02-disclaimer-all-stage"
+       data-start="0" data-duration="32.5" data-track-index="1">
+
+    <p class="f02-disclaimer-all-kicker" id="f02-disclaimer-all-kicker">✱ 免责声明</p>
+    <h1 class="f02-disclaimer-all-title" id="f02-disclaimer-all-title">使用前请先读完</h1>
+    <div class="f02-disclaimer-all-rule" id="f02-disclaimer-all-rule"></div>
+
+    <div class="f02-disclaimer-all-grid" id="f02-disclaimer-all-grid">
+      <div class="f02-disclaimer-all-cell">
+        <p class="f02-disclaimer-all-num" id="f02-disclaimer-all-n1">01</p>
+        <h2 class="f02-disclaimer-all-h" id="f02-disclaimer-all-h1">与学校无关</h2>
+        <p class="f02-disclaimer-all-b" id="f02-disclaimer-all-b1">本项目与任何学校、任何第三方服务提供商均无关联，未获授权、认可或支持</p>
+      </div>
+      <div class="f02-disclaimer-all-cell">
+        <p class="f02-disclaimer-all-num" id="f02-disclaimer-all-n2">02</p>
+        <h2 class="f02-disclaimer-all-h" id="f02-disclaimer-all-h2">可能违反校规</h2>
+        <p class="f02-disclaimer-all-b" id="f02-disclaimer-all-b2">「代打卡」可能被认定为<span class="f02-disclaimer-all-em">违纪行为</span>，可能导致<span class="f02-disclaimer-all-em">纪律处分</span></p>
+      </div>
+      <div class="f02-disclaimer-all-cell">
+        <p class="f02-disclaimer-all-num" id="f02-disclaimer-all-n3">03</p>
+        <h2 class="f02-disclaimer-all-h" id="f02-disclaimer-all-h3">遵守法律法规</h2>
+        <p class="f02-disclaimer-all-b" id="f02-disclaimer-all-b3">需遵守网络安全法、数据安全法、个人信息保护法及所在地法律</p>
+      </div>
+      <div class="f02-disclaimer-all-cell">
+        <p class="f02-disclaimer-all-num" id="f02-disclaimer-all-n4">04</p>
+        <h2 class="f02-disclaimer-all-h" id="f02-disclaimer-all-h4">风险自负</h2>
+        <p class="f02-disclaimer-all-b" id="f02-disclaimer-all-b4">使用本项目的风险由使用者自行承担</p>
+      </div>
+      <div class="f02-disclaimer-all-cell">
+        <p class="f02-disclaimer-all-num" id="f02-disclaimer-all-n5">05</p>
+        <h2 class="f02-disclaimer-all-h" id="f02-disclaimer-all-h5">坐标不代表真实位置</h2>
+        <p class="f02-disclaimer-all-b" id="f02-disclaimer-all-b5">提交的是学校登记的宿舍基准点，定位校验距离为 0 米</p>
+      </div>
+      <div class="f02-disclaimer-all-cell">
+        <p class="f02-disclaimer-all-num" id="f02-disclaimer-all-n6">06</p>
+        <h2 class="f02-disclaimer-all-h" id="f02-disclaimer-all-h6">按现状提供</h2>
+        <p class="f02-disclaimer-all-b" id="f02-disclaimer-all-b6">不作任何担保：接口不变更、签到必成功、服务可用、数据不丢失</p>
+      </div>
+      <div class="f02-disclaimer-all-cell">
+        <p class="f02-disclaimer-all-num" id="f02-disclaimer-all-n7">07</p>
+        <h2 class="f02-disclaimer-all-h" id="f02-disclaimer-all-h7">责任限制</h2>
+        <p class="f02-disclaimer-all-b" id="f02-disclaimer-all-b7">在适用法律允许的最大范围内，作者不承担任何责任</p>
+      </div>
+    </div>
+
+    <p class="f02-disclaimer-all-footer" id="f02-disclaimer-all-footer">仅供学习与技术研究使用。继续使用即表示你已阅读并理解上述全部条款。</p>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script>
+(function () {
+  var ID = "02-disclaimer-all";
+  var DOM = "f" + ID + "-";           // -> "f02-disclaimer-all-"
+  function el(suffix) { return document.getElementById(DOM + suffix); }
+
+  var tl = gsap.timeline({ paused: true });
+
+  /* ---------- Scene 1 (0.0–3.0s): kicker + title land, grid skeleton stands ---------- */
+  tl.fromTo(el("kicker"),
+      { autoAlpha: 0, y: -8 },
+      { autoAlpha: 1, y: 0, duration: 0.55, ease: "power2.out" }, 0.0);
+
+  tl.fromTo(el("title"),
+      { autoAlpha: 0, y: 18 },
+      { autoAlpha: 1, y: 0, duration: 0.42, ease: "power2.out" }, 0.08);
+
+  tl.fromTo(el("rule"),
+      { scaleX: 0 },
+      { scaleX: 1, duration: 0.70, ease: "power2.inOut" }, 0.50);
+
+  /* The 3x3 tile skeleton is already standing as hairlines + half-step tiles. */
+
+  /* ---------- Scene 2 (3.0–20.0s): seven clauses land in numeric order ---------- */
+  var stagger = 2.4;
+  for (var i = 1; i <= 7; i++) {
+    var t = 3.0 + (i - 1) * stagger;           // 3.0 .. 17.4
+    tl.fromTo(el("n" + i),
+        { autoAlpha: 0, y: -10 },
+        { autoAlpha: 1, y: 0, duration: 0.42, ease: "power3.out" }, t);
+
+    tl.fromTo(el("h" + i),
+        { autoAlpha: 0, y: 10 },
+        { autoAlpha: 1, y: 0, duration: 0.50, ease: "power2.out" }, t + 0.45);
+
+    tl.fromTo(el("b" + i),
+        { autoAlpha: 0, y: 8 },
+        { autoAlpha: 1, y: 0, duration: 0.55, ease: "power2.out" }, t + 0.90);
+  }
+
+  /* ---------- Scene 3 (20.0–27.0s): all seven present, hold for reading ---------- */
+
+  /* ---------- Scene 4 (27.0–32.0s): footer conclusion fades in, then dead still ---------- */
+  tl.fromTo(el("footer"),
+      { autoAlpha: 0, y: 10 },
+      { autoAlpha: 1, y: 0, duration: 0.75, ease: "power2.out" }, 27.0);
+
+  window.__timelines = window.__timelines || {};
+  window.__timelines[ID] = tl;
+})();
+</script>
+</template>

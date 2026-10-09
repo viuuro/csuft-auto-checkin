@@ -1,0 +1,225 @@
+<template>
+  <style>
+    /* ============================================================================
+       09-ai-and-outro · AI 辅助部署与收尾 — 1920×1080 · 14s · sketch: storyboard #frame-09
+       Code editorial: cream floor, ONE warm-navy terminal surface, JetBrains Mono chrome.
+       Framing: asymmetric 60/40 (deliberately not the 50/50 split of frames 06 / 08) —
+                message left, the four self-check commands right.
+       Coral is rationed: the ✱ kicker and the closing disclaimer line only.
+       Scene 1 (0.0–2.2)   kicker lands, the chat bubble pops in
+       Scene 2 (2.2–4.6)   the explanatory line fades up under the bubble
+       Scene 3 (4.6–10.6)  four commands typed one by one, per-character stagger
+       Scene 4 (10.6–14.0) hairline draws across · repo name + coral row · still to the end
+       ============================================================================ */
+
+    /* ---------- fonts · shipped local woff2, root-relative ---------- */
+    @font-face{font-family:"EB Garamond";src:url("assets/fonts/EBGaramond-400.woff2") format("woff2");font-weight:400;font-display:block}
+    @font-face{font-family:"EB Garamond";src:url("assets/fonts/EBGaramond-700.woff2") format("woff2");font-weight:700;font-display:block}
+    @font-face{font-family:"Inter";src:url("assets/fonts/Inter-400.woff2") format("woff2");font-weight:400;font-display:block}
+    @font-face{font-family:"Inter";src:url("assets/fonts/Inter-700.woff2") format("woff2");font-weight:700;font-display:block}
+    @font-face{font-family:"JetBrains Mono";src:url("assets/fonts/JetBrainsMono-400.woff2") format("woff2");font-weight:400;font-display:block}
+    @font-face{font-family:"JetBrains Mono";src:url("assets/fonts/JetBrainsMono-700.woff2") format("woff2");font-weight:700;font-display:block}
+    @font-face{font-family:"Noto Serif SC";src:url("assets/fonts/NotoSerifSC-400.woff2") format("woff2");font-weight:400;font-display:block}
+    @font-face{font-family:"Noto Sans SC";src:url("assets/fonts/NotoSansSC-400.woff2") format("woff2");font-weight:400;font-display:block}
+    @font-face{font-family:"Noto Sans SC";src:url("assets/fonts/NotoSansSC-700.woff2") format("woff2");font-weight:700;font-display:block}
+
+    /* ---------- tokens + frame root (never a class on this element) ---------- */
+    #root{
+      --f09-ink:#141413;
+      --f09-cream:#FAF9F5;
+      --f09-tile:#EFE9DE;      /* 浅色场上的卡片/气泡面（原为深色残留 #1F1E1B） */
+      --f09-coral:#BF7056;
+      --f09-navy-elev:#252320;
+      --f09-teal:#5DB8A6;
+      --f09-hair:rgba(20,20,19,.12);
+      --f09-hair-dark:rgba(20,20,19,.12);
+      position:relative;
+      width:1920px;height:1080px;
+      overflow:hidden;
+      background:transparent;
+      color:var(--f09-ink);
+      font-family:"Inter",sans-serif;
+      container-type:size;
+      -webkit-font-smoothing:antialiased;
+    }
+    #root *{box-sizing:border-box}
+
+    /* ---------- layers (element + attribute so they outrank the shared .clip box) ---------- */
+    div[class~="f09-ground"]{position:absolute;inset:0;background:#FAF9F5;pointer-events:none}
+    div[class~="f09-stage"]{
+      position:absolute;top:0;left:0;right:0;height:83%;   /* caption keep-out: nothing below y≈896 */
+      padding:0 4.2cqw;
+      display:flex;flex-direction:column;justify-content:center;  /* stack centres at ≈0.42 × 1080 */
+    }
+
+    /* ---------- kicker-spike · mono uppercase · coral ✱ ---------- */
+    .f09-kicker{
+      display:block;flex:none;
+      font-family:"JetBrains Mono","Noto Sans SC",monospace;
+      font-size:1.46cqw;font-weight:500;line-height:1.15;
+      letter-spacing:.16em;text-transform:uppercase;
+      color:var(--f09-coral);
+    }
+    .f09-spike{font-weight:400}
+
+    /* ---------- asymmetric 60 / 40 · message left, commands right ---------- */
+    .f09-main{
+      flex:none;
+      display:grid;grid-template-columns:60fr 40fr;
+      column-gap:4cqw;
+      align-items:center;
+      margin-top:3.8cqw;
+    }
+    .f09-left{display:flex;flex-direction:column;align-items:flex-start;min-width:0}
+
+    /* chat bubble — tile fill, 12px radius, hairline elevation only */
+    .f09-bubble{
+      display:inline-block;
+      background:var(--f09-tile);
+      border:1px solid var(--f09-hair);
+      border-radius:12px;
+      padding:1.15cqw 1.7cqw;
+      font-family:"Inter","Noto Sans SC",sans-serif;
+      font-size:1.5cqw;font-weight:400;line-height:1.35;
+      color:rgba(20,20,19,.86);
+    }
+    .f09-note{
+      margin-top:1.5cqw;
+      font-family:"Inter","Noto Sans SC",sans-serif;
+      font-size:1.5cqw;font-weight:400;line-height:1.5;
+      color:rgba(20,20,19,.76);
+    }
+
+    /* ---------- right 40% · the focal: warm-navy command panel ---------- */
+    .f09-panel{
+      background:var(--f09-navy-elev);
+      border:1px solid var(--f09-hair-dark);
+      border-radius:8px;
+      padding:2.8cqw 2.2cqw;
+      display:flex;flex-direction:column;
+    }
+    .f09-line{
+      font-family:"JetBrains Mono",monospace;
+      font-size:1.32cqw;font-weight:400;line-height:1.8;
+      color:var(--f09-cream);
+      white-space:pre;            /* keeps every typed space, never wraps */
+    }
+    .f09-pp{color:var(--f09-teal)}
+    .f09-ch{display:inline-block} /* real spans — the per-character stagger lands on these */
+
+    /* ---------- closing: full-width hairline, then the callback row ---------- */
+    .f09-rule{
+      flex:none;
+      height:1px;background:var(--f09-hair);
+      margin-top:4.3cqw;
+      transform-origin:left center;
+    }
+    .f09-close{
+      flex:none;
+      display:flex;justify-content:space-between;align-items:baseline;
+      column-gap:3cqw;
+      margin-top:2.9cqw;
+    }
+    .f09-repo{
+      font-family:"EB Garamond","Noto Serif SC",serif;
+      font-weight:400;font-size:3cqw;line-height:1.06;letter-spacing:-.022em;
+      color:var(--f09-ink);
+    }
+    .f09-warn{
+      font-family:"JetBrains Mono","Noto Sans SC",monospace;
+      font-size:1.4cqw;font-weight:500;line-height:1.2;letter-spacing:.04em;
+      color:var(--f09-coral);
+      white-space:nowrap;
+    }
+  </style>
+
+  <div data-hf-id="hf-y6mw" id="root" data-composition-id="09-ai-and-outro" data-start="0" data-duration="14" data-width="1920" data-height="1080">
+
+    <!-- track 0 · full-bleed cream ground (never a background on #root) -->
+    <div data-hf-id="hf-a9r9" class="clip f09-ground" id="f09-ground" data-start="0" data-duration="14" data-track-index="0"></div>
+
+    <!-- track 1 · the shot -->
+    <div data-hf-id="hf-q8pm" class="clip f09-stage" id="f09-stage" data-start="0" data-duration="14" data-track-index="1">
+
+      <div data-hf-id="hf-sgrz" class="f09-kicker" id="f09-kicker"><span data-hf-id="hf-4epc" class="f09-spike">✱</span> 也可以交给 AI 来部署</div>
+
+      <div data-hf-id="hf-pgf3" class="f09-main">
+        <!-- left 60% · the message -->
+        <div data-hf-id="hf-nfn7" class="f09-left">
+          <div data-hf-id="hf-lb2u" class="f09-bubble" id="f09-bubble">帮我把这个仓库部署到服务器</div>
+          <div data-hf-id="hf-gywg" class="f09-note" id="f09-note">仓库文档齐全、命令固定，可直接交给 AI 编程助手。它还带一套自检脚本</div>
+        </div>
+
+        <!-- right 40% · the focal terminal, four commands typed one by one -->
+        <div data-hf-id="hf-u0te" class="f09-panel" id="f09-panel">
+          <div data-hf-id="hf-caxd" class="f09-line" id="f09-l1"><span data-hf-id="hf-by57" class="f09-pp">$</span> <span data-hf-id="hf-fy30" class="f09-ch">p</span><span data-hf-id="hf-cdbr" class="f09-ch">y</span><span data-hf-id="hf-hjb4" class="f09-ch">t</span><span data-hf-id="hf-6eqc" class="f09-ch">h</span><span data-hf-id="hf-6t1d" class="f09-ch">o</span><span data-hf-id="hf-77ce" class="f09-ch">n</span> <span data-hf-id="hf-hrzs" class="f09-ch">t</span><span data-hf-id="hf-9nkl" class="f09-ch">o</span><span data-hf-id="hf-auho" class="f09-ch">o</span><span data-hf-id="hf-7zyg" class="f09-ch">l</span><span data-hf-id="hf-er5x" class="f09-ch">s</span><span data-hf-id="hf-hdfl" class="f09-ch">/</span><span data-hf-id="hf-gqp2" class="f09-ch">v</span><span data-hf-id="hf-as3n" class="f09-ch">e</span><span data-hf-id="hf-f5gy" class="f09-ch">r</span><span data-hf-id="hf-60fb" class="f09-ch">i</span><span data-hf-id="hf-adsm" class="f09-ch">f</span><span data-hf-id="hf-8pkn" class="f09-ch">y</span><span data-hf-id="hf-0g4x" class="f09-ch">_</span><span data-hf-id="hf-96vj" class="f09-ch">a</span><span data-hf-id="hf-w400" class="f09-ch">l</span><span data-hf-id="hf-ux2x" class="f09-ch">l</span><span data-hf-id="hf-hrqm" class="f09-ch">.</span><span data-hf-id="hf-eqn8" class="f09-ch">p</span><span data-hf-id="hf-8b9m" class="f09-ch">y</span></div>
+          <div data-hf-id="hf-mima" class="f09-line" id="f09-l2"><span data-hf-id="hf-uw9n" class="f09-pp">$</span> <span data-hf-id="hf-djq5" class="f09-ch">p</span><span data-hf-id="hf-7wyl" class="f09-ch">y</span><span data-hf-id="hf-gl2p" class="f09-ch">t</span><span data-hf-id="hf-63ho" class="f09-ch">h</span><span data-hf-id="hf-ag6n" class="f09-ch">o</span><span data-hf-id="hf-2uwi" class="f09-ch">n</span> <span data-hf-id="hf-gzdq" class="f09-ch">t</span><span data-hf-id="hf-bn3q" class="f09-ch">o</span><span data-hf-id="hf-b8sp" class="f09-ch">o</span><span data-hf-id="hf-vbdy" class="f09-ch">l</span><span data-hf-id="hf-500p" class="f09-ch">s</span><span data-hf-id="hf-t8ph" class="f09-ch">/</span><span data-hf-id="hf-8e9h" class="f09-ch">c</span><span data-hf-id="hf-4wkl" class="f09-ch">h</span><span data-hf-id="hf-m81v" class="f09-ch">e</span><span data-hf-id="hf-8uw9" class="f09-ch">c</span><span data-hf-id="hf-57t9" class="f09-ch">k</span><span data-hf-id="hf-dig5" class="f09-ch">_</span><span data-hf-id="hf-66xs" class="f09-ch">s</span><span data-hf-id="hf-ltqu" class="f09-ch">e</span><span data-hf-id="hf-jc52" class="f09-ch">r</span><span data-hf-id="hf-skve" class="f09-ch">v</span><span data-hf-id="hf-lfft" class="f09-ch">e</span><span data-hf-id="hf-jqg3" class="f09-ch">r</span><span data-hf-id="hf-epd8" class="f09-ch">_</span><span data-hf-id="hf-5smr" class="f09-ch">s</span><span data-hf-id="hf-ap3s" class="f09-ch">y</span><span data-hf-id="hf-397j" class="f09-ch">n</span><span data-hf-id="hf-a1tc" class="f09-ch">c</span><span data-hf-id="hf-qi0i" class="f09-ch">.</span><span data-hf-id="hf-dy16" class="f09-ch">p</span><span data-hf-id="hf-aasr" class="f09-ch">y</span></div>
+          <div data-hf-id="hf-qgqb" class="f09-line" id="f09-l3"><span data-hf-id="hf-uhym" class="f09-pp">$</span> <span data-hf-id="hf-fxkb" class="f09-ch">p</span><span data-hf-id="hf-9whq" class="f09-ch">y</span><span data-hf-id="hf-fsgn" class="f09-ch">t</span><span data-hf-id="hf-5avm" class="f09-ch">h</span><span data-hf-id="hf-cfps" class="f09-ch">o</span><span data-hf-id="hf-3nik" class="f09-ch">n</span> <span data-hf-id="hf-g6ro" class="f09-ch">t</span><span data-hf-id="hf-c1er" class="f09-ch">o</span><span data-hf-id="hf-6vfe" class="f09-ch">o</span><span data-hf-id="hf-u4gv" class="f09-ch">l</span><span data-hf-id="hf-3t3m" class="f09-ch">s</span><span data-hf-id="hf-ufmk" class="f09-ch">/</span><span data-hf-id="hf-09in" class="f09-ch">a</span><span data-hf-id="hf-h503" class="f09-ch">u</span><span data-hf-id="hf-b6eo" class="f09-ch">d</span><span data-hf-id="hf-geh3" class="f09-ch">i</span><span data-hf-id="hf-ezul" class="f09-ch">t</span><span data-hf-id="hf-eb27" class="f09-ch">_</span><span data-hf-id="hf-gbvc" class="f09-ch">p</span><span data-hf-id="hf-k4r4" class="f09-ch">r</span><span data-hf-id="hf-g062" class="f09-ch">i</span><span data-hf-id="hf-sz6f" class="f09-ch">v</span><span data-hf-id="hf-zv7m" class="f09-ch">a</span><span data-hf-id="hf-9nib" class="f09-ch">c</span><span data-hf-id="hf-9i6p" class="f09-ch">y</span><span data-hf-id="hf-qwbj" class="f09-ch">.</span><span data-hf-id="hf-f4y9" class="f09-ch">p</span><span data-hf-id="hf-cabw" class="f09-ch">y</span></div>
+          <div data-hf-id="hf-2z8s" class="f09-line" id="f09-l4"><span data-hf-id="hf-u3nl" class="f09-pp">$</span> <span data-hf-id="hf-fj9a" class="f09-ch">p</span><span data-hf-id="hf-bw0v" class="f09-ch">y</span><span data-hf-id="hf-fe5m" class="f09-ch">t</span><span data-hf-id="hf-7aer" class="f09-ch">h</span><span data-hf-id="hf-6h4d" class="f09-ch">o</span><span data-hf-id="hf-41tl" class="f09-ch">n</span> <span data-hf-id="hf-kk4z" class="f09-ch">t</span><span data-hf-id="hf-h1a7" class="f09-ch">o</span><span data-hf-id="hf-hfl8" class="f09-ch">o</span><span data-hf-id="hf-uirw" class="f09-ch">l</span><span data-hf-id="hf-3esl" class="f09-ch">s</span><span data-hf-id="hf-u1bj" class="f09-ch">/</span><span data-hf-id="hf-hisf" class="f09-ch">p</span><span data-hf-id="hf-hclx" class="f09-ch">r</span><span data-hf-id="hf-l14s" class="f09-ch">e</span><span data-hf-id="hf-a056" class="f09-ch">f</span><span data-hf-id="hf-tbut" class="f09-ch">l</span><span data-hf-id="hf-flv1" class="f09-ch">i</span><span data-hf-id="hf-9zhl" class="f09-ch">g</span><span data-hf-id="hf-7ops" class="f09-ch">h</span><span data-hf-id="hf-kyg0" class="f09-ch">t</span><span data-hf-id="hf-ramk" class="f09-ch">.</span><span data-hf-id="hf-hx3g" class="f09-ch">p</span><span data-hf-id="hf-04w5" class="f09-ch">y</span> <span data-hf-id="hf-i61n" class="f09-ch">-</span><span data-hf-id="hf-crbv" class="f09-ch">-</span><span data-hf-id="hf-g8o5" class="f09-ch">o</span><span data-hf-id="hf-4g4m" class="f09-ch">n</span><span data-hf-id="hf-tq5u" class="f09-ch">l</span><span data-hf-id="hf-ie08" class="f09-ch">i</span><span data-hf-id="hf-4ufn" class="f09-ch">n</span><span data-hf-id="hf-kmtr" class="f09-ch">e</span></div>
+        </div>
+      </div>
+
+      <div data-hf-id="hf-a4uq" class="f09-rule" id="f09-rule"></div>
+
+      <div data-hf-id="hf-vz5w" class="f09-close">
+        <div data-hf-id="hf-zkyx" class="f09-repo" id="f09-repo">csuft-auto-checkin</div>
+        <div data-hf-id="hf-qn4i" class="f09-warn" id="f09-warn">使用前请先读完免责声明</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var ID = "09-ai-and-outro";
+      var tl = gsap.timeline({ paused: true });
+
+      /* ---------- Scene 1 (0.0–2.2s) · kicker lands, bubble pops ---------- */
+      tl.fromTo("#f09-kicker", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.55, ease: "power3.out" }, 0.10);
+      /* the focal surface is on screen before 0.5s — its commands arrive in Scene 3 */
+      tl.fromTo("#f09-panel", { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, 0.15);
+      tl.fromTo("#f09-bubble", { opacity: 0, y: 12, scale: 0.94 }, { opacity: 1, y: 0, scale: 1, duration: 0.62, ease: "power3.out" }, 0.85);
+
+      /* ---------- Scene 2 (2.2–4.6s) · the explanatory line, then a reading pause ---------- */
+      tl.fromTo("#f09-note", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.7, ease: "power3.out" }, 2.35);
+
+      /* ---------- Scene 3 (4.6–10.6s) · four commands typed one by one ----------
+         Every character is a real span holding its space from t=0 (no reflow); the
+         typing is a deterministic per-character opacity + 4px keystroke stagger. */
+      var SEQ = [
+        { id: "f09-l1", n: 26 },   /* python tools/verify_all.py          */
+        { id: "f09-l2", n: 33 },   /* python tools/check_server_sync.py   */
+        { id: "f09-l3", n: 29 },   /* python tools/audit_privacy.py       */
+        { id: "f09-l4", n: 34 }    /* python tools/preflight.py --online  */
+      ];
+      var CHAR = 0.03;    /* s between keystrokes */
+      var CDUR = 0.045;   /* per-character ink-in */
+      var LEAD = 0.12;    /* prompt settles, then the command starts */
+      var DWELL = 0.5;    /* reading pause once a command has landed */
+      var t = 4.60;
+
+      SEQ.forEach(function (step) {
+        var line = document.getElementById(step.id);
+        if (!line) { t += LEAD + step.n * CHAR + CDUR + DWELL; return; }
+        var prompt = line.querySelector(".f09-pp");
+        var chars = line.querySelectorAll(".f09-ch");
+        if (prompt) {
+          tl.fromTo(prompt, { opacity: 0 }, { opacity: 1, duration: 0.12, ease: "none" }, t);
+        }
+        var c0 = t + LEAD;
+        tl.fromTo(chars, { opacity: 0, y: 4 }, { opacity: 1, y: 0, duration: CDUR, ease: "power1.out", stagger: CHAR }, c0);
+        t = c0 + (step.n - 1) * CHAR + CDUR + DWELL;
+      });
+
+      /* ---------- Scene 4 (10.6–14.0s) · hairline draws, closing row, then still ---------- */
+      tl.fromTo("#f09-rule",
+        { scaleX: 0 },
+        { scaleX: 1, duration: 0.42, ease: "power3.out", transformOrigin: "left center" }, 10.62);
+      tl.fromTo("#f09-repo", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.65, ease: "power3.out" }, 11.15);
+      tl.fromTo("#f09-warn", { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, 11.50);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[ID] = tl;
+      tl.seek(0);
+    })();
+  </script>
+</template>

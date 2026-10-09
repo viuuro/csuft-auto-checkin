@@ -1,0 +1,393 @@
+<template>
+  <style>
+/* CJK 子集字体（tools/prepare_cjk_fonts.py 生成）*/
+@font-face {
+  font-family: "Noto Serif SC";
+  font-style: normal;
+  font-weight: 400;
+  src: url("assets/fonts/NotoSerifSC-400.woff2") format("woff2");
+  font-display: block;
+}
+
+    /* ==========================================================================
+       08-deploy · 部署：本地与云服务器 — 1920×1080, 16.0s
+       Light editorial on the cream ground (#FAF9F5): the two code panels stay
+       dark (#252320) behind an ink@12–20% hairline, ink type, coral rationed to
+       the ✱ kicker, the focal cursor, the pipeline dots/rule and the timezone mark.
+       Split-screen: LEFT 本地 = supporting (simpler, completes first, then stops).
+                     RIGHT 云服务器 = foreground subject (the weight of the frame).
+       Richer motion, all transform/opacity (seek-safe): S1 hairline borders DRAW
+       closed and the column labels rise; S2 the two local commands stagger in;
+       S3 the cloud command types on, its caret settles solid coral; S4 the
+       five-step pipeline lights up step by step over a coral rule that draws
+       left→right, then the two prerequisites land and the frame holds dead still.
+       ========================================================================== */
+
+    /* ---------- fonts — shipped local woff2 (project-root relative) ---------- */
+    @font-face{font-family:"Inter";src:url("assets/fonts/Inter-400.woff2") format("woff2");font-weight:400;font-style:normal;font-display:block}
+    @font-face{font-family:"Inter";src:url("assets/fonts/Inter-700.woff2") format("woff2");font-weight:700;font-style:normal;font-display:block}
+    @font-face{font-family:"JetBrains Mono";src:url("assets/fonts/JetBrainsMono-400.woff2") format("woff2");font-weight:400;font-style:normal;font-display:block}
+    @font-face{font-family:"JetBrains Mono";src:url("assets/fonts/JetBrainsMono-700.woff2") format("woff2");font-weight:700;font-style:normal;font-display:block}
+    @font-face{font-family:"Noto Sans SC";src:url("assets/fonts/NotoSansSC-400.woff2") format("woff2");font-weight:400;font-style:normal;font-display:block}
+    @font-face{font-family:"Noto Sans SC";src:url("assets/fonts/NotoSansSC-700.woff2") format("woff2");font-weight:700;font-style:normal;font-display:block}
+
+    /* ---------- root (styled by #root, never by a class) ---------- */
+    #root{
+      position:absolute;inset:0;width:1920px;height:1080px;overflow:hidden;
+      background:transparent;color:#141413;
+      font-family:"Inter","Noto Sans SC",sans-serif;
+      container-type:size;
+      -webkit-font-smoothing:antialiased;
+    }
+    #root *{box-sizing:border-box}
+
+    /* ---------- full-bleed navy ground (own clip layer) ---------- */
+    [id="f08-deploy-ground"]{position:absolute;inset:0;background:#FAF9F5}
+
+    /* ---------- content stage: a plain (untimed) wrapper ---------- */
+    [id="f08-deploy-stage"]{
+      position:absolute;inset:0;
+      display:flex;flex-direction:column;justify-content:center;
+      padding:0 4.6cqw;
+    }
+
+    /* ---------- kicker (✱ coral eyebrow) ---------- */
+    [id="f08-deploy-kicker"]{
+      margin:0 0 3.4cqw;
+      font-family:"JetBrains Mono","Noto Sans SC",monospace;
+      font-weight:500;font-size:1.4583cqw;line-height:1;
+      letter-spacing:.16em;text-transform:uppercase;color:#BF7056;
+    }
+    [id="f08-deploy-spike"]{display:inline-block;margin-right:.5cqw}
+
+    /* ---------- two columns: supporting 1fr : focal 1.3fr ---------- */
+    [id="f08-deploy-cols"]{display:grid;grid-template-columns:1fr 1.3fr;gap:3.4cqw;align-items:start}
+    [id="f08-deploy-col-l"],[id="f08-deploy-col-r"]{display:flex;flex-direction:column;min-width:0}
+
+    /* ---------- mono sub-labels (fixed height so both panels start level) ---------- */
+    [id="f08-deploy-label-l"],[id="f08-deploy-label-r"]{
+      height:2.1cqw;display:flex;align-items:center;margin-bottom:1cqw;
+      font-family:"JetBrains Mono","Noto Sans SC",monospace;
+      font-weight:500;line-height:1;letter-spacing:.02em;
+    }
+    [id="f08-deploy-label-l"]{font-size:1.3542cqw;color:rgba(20,20,19,.74)}
+    [id="f08-deploy-label-r"]{font-size:1.5625cqw;color:rgba(20,20,19,.92)}
+
+    /* ---------- code panels (navy-elev half-step, 8px, cream@14% hairline) ---------- */
+    [id="f08-deploy-panel-l"],[id="f08-deploy-panel-r"]{
+      background:#252320;
+      border:1px solid rgba(20,20,19,.12);
+      border-radius:8px;
+      display:flex;flex-direction:column;justify-content:center;
+    }
+    [id="f08-deploy-panel-l"]{padding:1.9cqw 1.7cqw;min-height:11.7cqw;gap:.55cqw}
+    /* the focal panel: taller, roomier type — it carries the frame */
+    [id="f08-deploy-panel-r"]{
+      padding:2.1cqw 2cqw;min-height:15cqw;gap:.6cqw;
+      border-color:rgba(20,20,19,.2);
+    }
+
+    /* ---- panel hairline, rebuilt as four real 2px layers so the empty frames
+       can DRAW closed in Scene 1 (a border-width tween is not seek-safe; the
+       four layers are one fromTo each, scaleX/scaleY about the panel edge).
+       Each layer is a 2px rule inset 1px — i.e. exactly where the border sat,
+       and clipped to the inner box so the two axes never overlap. ---- */
+    [class~="f08-deploy-panel"]{position:relative}
+    [class~="f08-deploy-pb"]{position:absolute;overflow:hidden;pointer-events:none;z-index:1}
+    [class~="f08-deploy-pb"]:before{
+      content:"";position:absolute;inset:1px;
+      background:rgba(20,20,19,.12);
+    }
+    [class~="f08-deploy-pb-t"],[class~="f08-deploy-pb-b"]{left:2px;right:2px;height:2px;transform-origin:0% 50%}
+    [class~="f08-deploy-pb-l"],[class~="f08-deploy-pb-r"]{top:2px;bottom:2px;width:2px;transform-origin:50% 0%}
+    [class~="f08-deploy-pb-t"]{top:0}
+    [class~="f08-deploy-pb-b"]{bottom:0}
+    [class~="f08-deploy-pb-l"]{left:0}
+    [class~="f08-deploy-pb-r"]{right:0}
+    /* the focal panel's hairline is one step stronger (was border-color .2) */
+    [id="f08-deploy-panel-r"] [class~="f08-deploy-pb"]:before{background:rgba(20,20,19,.2)}
+
+    /* ---------- code lines ---------- */
+    /* 代码文字必须是 cream：面板底色是深色 #252320，用 ink #141413 等于隐形
+       （对比度约 1.2:1）。同组的 teal / coral / amber 语法色本就是深色面
+       调校的，这里必须与它们一致。 */
+    [id="f08-deploy-l1"],[id="f08-deploy-l2"]{
+      margin:0;white-space:pre;color:#FAF9F5;
+      font-family:"JetBrains Mono","Noto Sans SC",monospace;
+      font-weight:400;font-size:1.5625cqw;line-height:1.8;
+    }
+    [id="f08-deploy-t1"],[id="f08-deploy-t2"]{
+      margin:0;white-space:pre;color:#FAF9F5;
+      font-family:"JetBrains Mono","Noto Sans SC",monospace;
+      font-weight:400;font-size:1.875cqw;line-height:1.85;
+    }
+    /* per-character boxes built at init (deterministic typing reveal) */
+    [class~="f08-deploy-ch"]{display:inline-block;white-space:pre;font-style:normal}
+    /* syntax decoration on the navy surface */
+    [class~="f08-deploy-teal"]{color:#5DB8A6}
+    [class~="f08-deploy-coral"]{color:#BF7056}
+    [class~="f08-deploy-amber"]{color:#E8A55A}
+
+    /* ---------- terminal carets (coral = the focal mark; CSS static, no
+       transitions — the JS owns every fade) ---------- */
+    [id="f08-deploy-caret-l"],[id="f08-deploy-caret-r"]{
+      display:inline-block;width:.28em;height:1.02em;margin-left:.3em;
+      vertical-align:-.16em;transform-origin:50% 100%;
+    }
+    [id="f08-deploy-caret-l"]{background:rgba(250,249,245,.34)}
+    [id="f08-deploy-caret-r"]{background:#BF7056}
+
+    /* ---------- left explanatory line ---------- */
+    [id="f08-deploy-note-l"]{
+      margin:1.2cqw 0 0;color:rgba(20,20,19,.74);
+      font-family:"Inter","Noto Sans SC",sans-serif;
+      font-weight:400;font-size:1.5625cqw;line-height:1.5;
+    }
+
+    /* ---------- right column: the five-step process pipeline ---------- */
+    [id="f08-deploy-flow"]{margin:1.3cqw 0 0}
+    [class~="f08-deploy-pipe"]{
+      position:relative;padding-bottom:.9cqw;
+      display:flex;align-items:baseline;
+      color:rgba(20,20,19,.8);
+      font-family:"Inter","Noto Sans SC",sans-serif;
+      font-weight:400;font-size:1.5625cqw;line-height:1.5;
+    }
+    [class~="f08-deploy-step"]{white-space:nowrap}
+    [class~="f08-deploy-arrow"]{
+      margin:0 .5cqw;color:rgba(20,20,19,.74);
+      font-family:"JetBrains Mono",monospace;font-size:.86em;
+    }
+    [class~="f08-deploy-code"]{font-family:"JetBrains Mono",monospace;font-size:.9em}
+    /* each step carries a faint pip (the empty track) under a solid coral one
+       (the step lighting up) — the pair is measured so neither shifts layout */
+    [class~="f08-deploy-pip"]{
+      display:inline-block;width:.46cqw;height:.46cqw;border-radius:50%;
+      margin-right:.5cqw;vertical-align:.06em;
+    }
+    [class~="f08-deploy-pip-dim"]{background:rgba(191,112,86,.22)}
+    [class~="f08-deploy-pip-on"]{background:#BF7056;margin-left:-.96cqw}
+    /* the coral progress rule: one segment per step, drawn left→right by the JS.
+       A hairline absolutely pinned under the pipe — it adds no layout height and
+       stretches with the row via preserveAspectRatio="none". */
+    [class~="f08-deploy-rule"]{
+      position:absolute;left:0;right:0;bottom:.25cqw;height:3px;pointer-events:none;
+    }
+    [class~="f08-deploy-rule"] svg{display:block;width:100%;height:3px;overflow:visible}
+    [class~="f08-deploy-seg-rect"]{fill:#BF7056;opacity:.72}
+
+    /* ---------- right column: the two prerequisites ---------- */
+    [id="f08-deploy-pre1"],[id="f08-deploy-pre2"]{
+      /* --bar-s draws the coral/ink accent bar (scaleY, top-down);
+         --pre-y is the entrance offset — both live in one fromTo per element */
+      --bar-s:1;--pre-y:0px;
+      position:relative;padding-left:1.05cqw;margin:0;
+      transform:translateY(var(--pre-y));
+      font-family:"Inter","Noto Sans SC",sans-serif;
+      font-weight:400;font-size:1.4583cqw;line-height:1.5;color:rgba(20,20,19,.74);
+    }
+    [id="f08-deploy-pre1"]{margin-top:.95cqw}
+    [id="f08-deploy-pre2"]{margin-top:.55cqw}
+    [id="f08-deploy-pre1"]:before,[id="f08-deploy-pre2"]:before{
+      content:"";position:absolute;left:0;top:.26cqw;bottom:.26cqw;width:2px;
+      transform:scaleY(var(--bar-s));transform-origin:50% 0%;
+    }
+    [id="f08-deploy-pre1"]:before{background:rgba(20,20,19,.22)}
+    [id="f08-deploy-pre2"]:before{background:#BF7056}
+    [class~="f08-deploy-strong"]{color:rgba(20,20,19,.92)}
+    [class~="f08-deploy-mono"]{font-family:"JetBrains Mono",monospace;font-size:.94em}
+  </style>
+
+  <div data-hf-id="hf-iwaz" id="root" data-composition-id="08-deploy" data-start="0" data-duration="16.5" data-width="1920" data-height="1080">
+
+    <!-- full-bleed navy ground on its own clip layer -->
+    <div data-hf-id="hf-yl20" class="clip" id="f08-deploy-ground" data-start="0" data-duration="16.5" data-track-index="0"></div>
+
+    <!-- content stage: a plain (untimed) wrapper, so nothing but this file's
+         own CSS positions it -->
+    <div data-hf-id="hf-2872" id="f08-deploy-stage">
+
+      <p data-hf-id="hf-t5st" id="f08-deploy-kicker"><span data-hf-id="hf-qnzc" id="f08-deploy-spike">✱</span>两种部署方式</p>
+
+      <div data-hf-id="hf-hma5" id="f08-deploy-cols">
+
+        <!-- ================= LEFT · 本地 · supporting ================= -->
+        <div data-hf-id="hf-o1gt" id="f08-deploy-col-l">
+          <div data-hf-id="hf-91zl" id="f08-deploy-label-l"><span data-hf-id="hf-d6f9">本地</span></div>
+
+          <div data-hf-id="hf-r1nl" class="f08-deploy-panel" id="f08-deploy-panel-l">
+            <span data-hf-id="hf-pl-t" class="f08-deploy-pb f08-deploy-pb-t"></span>
+            <span data-hf-id="hf-pl-r" class="f08-deploy-pb f08-deploy-pb-r"></span>
+            <span data-hf-id="hf-pl-b" class="f08-deploy-pb f08-deploy-pb-b"></span>
+            <span data-hf-id="hf-pl-l" class="f08-deploy-pb f08-deploy-pb-l"></span>
+            <p data-hf-id="hf-5k2j" id="f08-deploy-l1"><span data-hf-id="hf-hz32" class="f08-deploy-teal">$</span> pip install -r requirements.txt</p>
+            <p data-hf-id="hf-qxun" id="f08-deploy-l2"><span data-hf-id="hf-xo02" class="f08-deploy-teal">$</span> python run.py<span data-hf-id="hf-rcil" class="f08-deploy-caret" id="f08-deploy-caret-l"></span></p>
+          </div>
+
+          <p data-hf-id="hf-p3xt" id="f08-deploy-note-l">两行命令，打开 /admin 设置管理员</p>
+        </div>
+
+        <!-- ============ RIGHT · 云服务器 · foreground subject ============ -->
+        <div data-hf-id="hf-h437" id="f08-deploy-col-r">
+          <div data-hf-id="hf-vrtb" id="f08-deploy-label-r"><span data-hf-id="hf-vkdq">云服务器</span></div>
+
+          <div data-hf-id="hf-9thb" class="f08-deploy-panel" id="f08-deploy-panel-r">
+            <span data-hf-id="hf-pr-t" class="f08-deploy-pb f08-deploy-pb-t"></span>
+            <span data-hf-id="hf-pr-r" class="f08-deploy-pb f08-deploy-pb-r"></span>
+            <span data-hf-id="hf-pr-b" class="f08-deploy-pb f08-deploy-pb-b"></span>
+            <span data-hf-id="hf-pr-l" class="f08-deploy-pb f08-deploy-pb-l"></span>
+            <p data-hf-id="hf-2uw9" id="f08-deploy-t1"><span data-hf-id="hf-y2b3" class="f08-deploy-teal">$</span> <span data-hf-id="hf-3d6t" class="f08-deploy-coral">python</span> tools/deploy_remote.py \</p>
+            <p data-hf-id="hf-9iyo" id="f08-deploy-t2">    --host <span data-hf-id="hf-3ziz" class="f08-deploy-amber">&lt;服务器&gt;</span> --user root<span data-hf-id="hf-qkqr" class="f08-deploy-caret" id="f08-deploy-caret-r"></span></p>
+          </div>
+
+          <div data-hf-id="hf-bugj" id="f08-deploy-flow">
+            <div data-hf-id="hf-8kun" class="f08-deploy-pipe"><span data-hf-id="hf-8qnh" class="f08-deploy-step"><span data-hf-id="hf-8qp1" class="f08-deploy-pip f08-deploy-pip-dim"></span><span data-hf-id="hf-8qp2" class="f08-deploy-pip f08-deploy-pip-on"></span>预检</span><span data-hf-id="hf-xgzb" class="f08-deploy-arrow">→</span><span data-hf-id="hf-3l8j" class="f08-deploy-step"><span data-hf-id="hf-3lp1" class="f08-deploy-pip f08-deploy-pip-dim"></span><span data-hf-id="hf-3lp2" class="f08-deploy-pip f08-deploy-pip-on"></span>上传</span><span data-hf-id="hf-aypj" class="f08-deploy-arrow">→</span><span data-hf-id="hf-k4j3" class="f08-deploy-step"><span data-hf-id="hf-k4p1" class="f08-deploy-pip f08-deploy-pip-dim"></span><span data-hf-id="hf-k4p2" class="f08-deploy-pip f08-deploy-pip-on"></span>装依赖</span><span data-hf-id="hf-akei" class="f08-deploy-arrow">→</span><span data-hf-id="hf-en7o" class="f08-deploy-step"><span data-hf-id="hf-enp1" class="f08-deploy-pip f08-deploy-pip-dim"></span><span data-hf-id="hf-enp2" class="f08-deploy-pip f08-deploy-pip-on"></span>配 <span data-hf-id="hf-h94y" class="f08-deploy-code">systemd</span></span><span data-hf-id="hf-a63h" class="f08-deploy-arrow">→</span><span data-hf-id="hf-225p" class="f08-deploy-step"><span data-hf-id="hf-225q" class="f08-deploy-pip f08-deploy-pip-dim"></span><span data-hf-id="hf-225r" class="f08-deploy-pip f08-deploy-pip-on"></span>启动验证</span></div>
+            <div data-hf-id="hf-8kru" class="f08-deploy-rule"><svg data-hf-id="hf-8ksv" viewBox="0 0 1000 86" preserveAspectRatio="none" aria-hidden="true"><rect data-hf-id="hf-8kse" class="f08-deploy-seg-rect" x="0" y="84" width="200" height="3"></rect><rect data-hf-id="hf-8ksf" class="f08-deploy-seg-rect" x="200" y="84" width="200" height="3"></rect><rect data-hf-id="hf-8ksg" class="f08-deploy-seg-rect" x="400" y="84" width="200" height="3"></rect><rect data-hf-id="hf-8ksh" class="f08-deploy-seg-rect" x="600" y="84" width="200" height="3"></rect><rect data-hf-id="hf-8ksi" class="f08-deploy-seg-rect" x="800" y="84" width="200" height="3"></rect></svg></div>
+          </div>
+
+          <p data-hf-id="hf-8qwr" id="f08-deploy-pre1">服务器需在<span data-hf-id="hf-tahy" class="f08-deploy-strong">中国大陆</span></p>
+          <p data-hf-id="hf-kchs" id="f08-deploy-pre2">时区 <span data-hf-id="hf-xwnx" class="f08-deploy-mono">Asia/Shanghai</span></p>
+        </div>
+
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        if (!window.gsap || typeof window.gsap.timeline !== "function") return;
+
+        /* Ids carry the project's frame prefix; resolve by prefixed id first,
+           then by id suffix, so a re-namespacing pass can never orphan them. */
+        var $ = function (name) {
+          return document.getElementById("f08-deploy-" + name) ||
+                 document.querySelector('[id$="-deploy-' + name + '"]');
+        };
+        /* the panel hairlines are four real layers per panel (not a CSS border),
+           so Scene 1 can DRAW the empty frames closed: top/bottom scaleX about
+           the left edge, left/right scaleY about the top edge */
+        var edgesOf = function (panel) {
+          return Array.prototype.slice.call(panel.querySelectorAll(".f08-deploy-pb"));
+        };
+
+        var stage = $("stage");
+        if (!stage) return;
+
+        var kicker = $("kicker");
+        var spike = $("spike");
+        var labelL = $("label-l");
+        var labelR = $("label-r");
+        var panelL = $("panel-l");
+        var panelR = $("panel-r");
+        var lineL1 = $("l1");
+        var lineL2 = $("l2");
+        var caretL = $("caret-l");
+        var caretR = $("caret-r");
+        var noteL = $("note-l");
+        var t1 = $("t1");
+        var t2 = $("t2");
+        var flow = $("flow");
+        var pre1 = $("pre1");
+        var pre2 = $("pre2");
+
+        /* One box per character — a deterministic, seek-safe typing reveal.
+           Runs at parse time, before the timeline is built. */
+        var splitChars = function (el) {
+          var out = [];
+          (function walk(node) {
+            Array.prototype.slice.call(node.childNodes).forEach(function (n) {
+              if (n.nodeType === 3) {
+                var frag = document.createDocumentFragment();
+                var text = n.nodeValue;
+                for (var i = 0; i < text.length; i++) {
+                  var box = document.createElement("span");
+                  box.className = "f08-deploy-ch";
+                  box.appendChild(document.createTextNode(text.charAt(i)));
+                  frag.appendChild(box);
+                  out.push(box);
+                }
+                node.replaceChild(frag, n);
+              } else if (n.nodeType === 1) {
+                walk(n);
+              }
+            });
+          })(el);
+          return out;
+        };
+
+        var line1 = splitChars(t1);
+        var prompt = line1.slice(0, 1);              /* the "$" shell prompt of the cloud command */
+        var typed = line1.slice(1).concat(splitChars(t2)); /* everything typed on, character by character */
+
+        /* Scene 4's pipeline, resolved by class inside its own wrapper — the
+           five steps, the pips that light them up, and the coral rule's five
+           segments. Never indexed by document order, so an id-renaming pass
+           cannot orphan them. */
+        var pick = function (parent, cls) {
+          return parent
+            ? Array.prototype.slice.call(parent.querySelectorAll("." + cls))
+            : [];
+        };
+        var steps = pick(flow, "f08-deploy-step");
+        var pipsOn = pick(flow, "f08-deploy-pip-on");
+        var segs = pick(flow, "f08-deploy-seg-rect");
+
+        var tl = window.gsap.timeline({ paused: true });
+
+        /* ===== Scene 1 (0.0–1.6s) — symmetric split-screen prep: the kicker
+           lands, both column labels rise 12px into place, the two panels'
+           hairlines DRAW closed around still-empty frames.
+           Voice cue: 「部署有两条路。」 ===== */
+        tl.fromTo(kicker, { opacity: 0, y: 18 }, { autoAlpha: 1, opacity: 1, y: 0, duration: 0.62, ease: "power2.out" }, 0.06);
+        tl.fromTo(spike, { opacity: 0, scale: 0.92 }, { autoAlpha: 1, opacity: 1, scale: 1, duration: 0.52, ease: "power2.out" }, 0.06);
+        tl.fromTo(labelL, { autoAlpha: 0, y: 12 }, { autoAlpha: 1, y: 0, duration: 0.5, ease: "power2.out" }, 0.28);
+        tl.fromTo(labelR, { autoAlpha: 0, y: 12 }, { autoAlpha: 1, y: 0, duration: 0.5, ease: "power2.out" }, 0.42);
+        tl.fromTo(panelL, { autoAlpha: 0, y: 18, scale: 0.994 }, { autoAlpha: 1, y: 0, scale: 1, duration: 0.62, ease: "power2.out" }, 0.50);
+        tl.fromTo(edgesOf(panelL), { autoAlpha: 0, scaleX: 0, scaleY: 0 }, { autoAlpha: 1, scaleX: 1, scaleY: 1, duration: 0.55, stagger: 0.06, ease: "power2.out" }, 0.60);
+        tl.fromTo(panelR, { autoAlpha: 0, y: 18, scale: 0.994 }, { autoAlpha: 1, y: 0, scale: 1, duration: 0.66, ease: "power2.out" }, 0.64);
+        tl.fromTo(edgesOf(panelR), { autoAlpha: 0, scaleX: 0, scaleY: 0 }, { autoAlpha: 1, scaleX: 1, scaleY: 1, duration: 0.6, stagger: 0.06, ease: "power2.out" }, 0.74);
+
+        /* ===== Scene 2 (1.6–5.4s) — the LEFT column completes first and then
+           stops changing: its two command lines stagger on 0.25s apart (not
+           together), the resting cursor settles, the one-line note lands.
+           Voice cue: 「本地：装依赖、跑起来，两行命令。」 ===== */
+        tl.fromTo(lineL1, { autoAlpha: 0, y: 12 }, { autoAlpha: 1, y: 0, duration: 0.46, ease: "power2.out" }, 2.05);
+        tl.fromTo(lineL2, { autoAlpha: 0, y: 12 }, { autoAlpha: 1, y: 0, duration: 0.46, ease: "power2.out" }, 2.30);
+        tl.fromTo(caretL, { autoAlpha: 0, scaleY: 0.25 }, { autoAlpha: 1, scaleY: 1, duration: 0.34, ease: "power2.out" }, 2.92);
+        tl.fromTo(noteL, { autoAlpha: 0, y: 12 }, { autoAlpha: 1, y: 0, duration: 0.5, ease: "power2.out" }, 4.45);
+
+        /* ===== Scene 3 (5.4–10.6s) — the RIGHT column, the weight of the
+           frame: the prompt arrives, then the deployment command types on,
+           character by character (typing + key-press). The <服务器>
+           placeholder types on in amber. The caret lands coral, holds solid
+           through the last keystrokes (one settle, no blink loop), and a thin
+           coral rule then draws in under the panel to mark the command ready.
+           Voice cue: 「云服务器：一条命令完成预检、上传、装依赖……」 ===== */
+        tl.fromTo(prompt, { opacity: 0 }, { autoAlpha: 1, opacity: 1, duration: 0.26, ease: "none" }, 5.45);
+        /* 44 character boxes after the prompt: 0.099s apart types the command
+           across 6.05 → 10.44s, i.e. the whole of Scene 3 and no further */
+        tl.fromTo(typed, { opacity: 0 }, { autoAlpha: 1, opacity: 1, duration: 0.03, stagger: 0.099, ease: "none" }, 6.05);
+        tl.fromTo(caretR, { autoAlpha: 0, scaleY: 0.25 }, { autoAlpha: 1, scaleY: 1, duration: 0.34, ease: "power2.out" }, 10.10);
+        tl.fromTo(caretR, { opacity: 0.25 }, { autoAlpha: 1, opacity: 1, duration: 0.16, ease: "power1.inOut" }, 10.44);
+        tl.fromTo(edgesOf(panelR).slice(2, 3), { autoAlpha: 0, scaleX: 0 }, { autoAlpha: 1, scaleX: 1, duration: 0.5, ease: "power2.out" }, 10.55);
+
+        /* ===== Scene 4 (10.6–16.0s) — the pipeline completes, step by step:
+           each of the five steps rises in 0.55s after the last and its coral
+           pip lights from faint to solid, while the coral rule under the line
+           draws left→right in the same rhythm and finishes on the last step
+           (the ping). Only after that do the two prerequisites land, the
+           second carrying the coral timezone mark. Held dead still from 14.2s;
+           no exit — the root crossfade owns the cut. ===== */
+        tl.fromTo(steps, { autoAlpha: 0, y: 10 }, { autoAlpha: 1, y: 0, duration: 0.42, stagger: 0.55, ease: "power2.out" }, 11.00);
+        tl.fromTo(pipsOn, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.4, stagger: 0.55, ease: "power2.out" }, 11.00);
+        tl.fromTo(segs, { scaleX: 0, svgOrigin: "0 84" }, { scaleX: 1, duration: 0.4, stagger: 0.55, ease: "power2.out" }, 11.00);
+        /* the two prerequisites land 13.20s / 13.50s — one fromTo each (rise +
+           fade + its accent bar drawing down in the same tween) */
+        tl.fromTo(pre1, { autoAlpha: 0, "--pre-y": "12px", "--bar-s": 0 }, { autoAlpha: 1, "--pre-y": "0px", "--bar-s": 1, duration: 0.44, ease: "power2.out" }, 13.20);
+        tl.fromTo(pre2, { autoAlpha: 0, "--pre-y": "12px", "--bar-s": 0 }, { autoAlpha: 1, "--pre-y": "0px", "--bar-s": 1, duration: 0.44, ease: "power2.out" }, 13.50);
+
+        window.__timelines = window.__timelines || {};
+        window.__timelines["08-deploy"] = tl;
+      })();
+    </script>
+  </div>
+</template>

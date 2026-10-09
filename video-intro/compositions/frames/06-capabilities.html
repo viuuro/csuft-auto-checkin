@@ -1,0 +1,229 @@
+<template>
+  <div data-hf-id="hf-ymsx" id="root" data-composition-id="06-capabilities" data-start="0" data-duration="15.5" data-track-index="0" data-width="1920" data-height="1080">
+    <style>
+/* CJK 子集字体（tools/prepare_cjk_fonts.py 生成）*/
+@font-face {
+  font-family: "Noto Sans SC";
+  font-style: normal;
+  font-weight: 400;
+  src: url("assets/fonts/NotoSansSC-400.woff2") format("woff2");
+  font-display: block;
+}
+@font-face {
+  font-family: "Noto Sans SC";
+  font-style: normal;
+  font-weight: 700;
+  src: url("assets/fonts/NotoSansSC-700.woff2") format("woff2");
+  font-display: block;
+}
+@font-face {
+  font-family: "Noto Serif SC";
+  font-style: normal;
+  font-weight: 400;
+  src: url("assets/fonts/NotoSerifSC-400.woff2") format("woff2");
+  font-display: block;
+}
+
+      /* ---------- fonts (shipped local woff2) ---------- */
+      @font-face{font-family:"EB Garamond";src:url("assets/fonts/EBGaramond-400.woff2") format("woff2");font-weight:400;font-display:block}
+      @font-face{font-family:"EB Garamond";src:url("assets/fonts/EBGaramond-700.woff2") format("woff2");font-weight:700;font-display:block}
+      @font-face{font-family:"Inter";src:url("assets/fonts/Inter-400.woff2") format("woff2");font-weight:400;font-display:block}
+      @font-face{font-family:"Inter";src:url("assets/fonts/Inter-700.woff2") format("woff2");font-weight:700;font-display:block}
+      @font-face{font-family:"JetBrains Mono";src:url("assets/fonts/JetBrainsMono-400.woff2") format("woff2");font-weight:400;font-display:block}
+      @font-face{font-family:"JetBrains Mono";src:url("assets/fonts/JetBrainsMono-700.woff2") format("woff2");font-weight:700;font-display:block}
+@font-face {
+  font-family: "Georgia";
+  font-style: normal;
+  font-weight: 400;
+  src: local("Georgia");
+  font-display: block;
+}
+@font-face {
+  font-family: "Noto Serif CJK SC";
+  font-style: normal;
+  font-weight: 400;
+  src: local("Noto Serif CJK SC");
+  font-display: block;
+}
+@font-face {
+  font-family: "Songti SC";
+  font-style: normal;
+  font-weight: 400;
+  src: local("Songti SC");
+  font-display: block;
+}
+
+      /* ---------- root: the frame container ---------- */
+      #root{
+        position:relative;width:1920px;height:1080px;overflow:hidden;
+        background:transparent;color:#141413;
+        font-family:"Inter",sans-serif;
+        container-type:size;
+        -webkit-font-smoothing:antialiased;
+      }
+      #root *{box-sizing:border-box}
+
+      /* ---------- ground ---------- */
+      .f06-capabilities-ground{
+        position:absolute;inset:0;background:#FAF9F5;pointer-events:none;
+      }
+
+      /* ---------- layout ---------- */
+      .f06-capabilities-inner{
+        position:absolute;inset:0;display:flex;flex-direction:column;
+        padding:3.5cqw 4.2cqw 2.4cqw;
+      }
+      .f06-capabilities-kicker{
+        display:block;flex:none;
+        font-family:"JetBrains Mono",monospace;font-size:1.5cqw;font-weight:500;
+        letter-spacing:.16em;text-transform:uppercase;color:#BF7056;
+        margin:0 0 4cqw;
+      }
+      .f06-capabilities-two{
+        display:grid;grid-template-columns:1fr 1fr;gap:3.4cqw;
+      }
+
+      /* ---------- tile cards (hairline elevation only) ---------- */
+      .f06-capabilities-card{
+        background:#EFE9DE;
+        border:1px solid rgba(20,20,19,.12);
+        border-radius:8px;
+        padding:3cqw 2.6cqw;
+        display:flex;flex-direction:column;
+        will-change:transform,opacity;
+      }
+      .f06-capabilities-card--tail{
+        background:#ECE3D4;
+        border-color:rgba(20,20,19,.12);
+      }
+      .f06-capabilities-label{
+        display:block;
+        font-family:"JetBrains Mono",monospace;font-size:1.2cqw;font-weight:500;
+        letter-spacing:.02em;color:rgba(20,20,19,.72);margin:0;
+      }
+      .f06-capabilities-title{
+        display:block;
+        font-family:"EB Garamond",Georgia,"Songti SC","Noto Serif CJK SC",serif;
+        font-weight:400;font-size:2.15cqw;line-height:1.15;letter-spacing:-.01em;
+        color:#141413;margin:1.05cqw 0 1.4cqw;
+      }
+      .f06-capabilities-card--tail .f06-capabilities-title{
+        font-size:2.03cqw;color:rgba(20,20,19,.86);
+      }
+      .f06-capabilities-list{
+        list-style:none;margin:0;padding:0;
+        font-family:"Inter",sans-serif;font-size:1.44cqw;line-height:1.5;
+        color:rgba(20,20,19,.78);
+        display:flex;flex-direction:column;gap:.95cqw;
+      }
+      .f06-capabilities-card--tail .f06-capabilities-list{color:rgba(20,20,19,.64)}
+      .f06-capabilities-item{display:list-item;position:relative;padding-left:1.9cqw;will-change:transform,opacity}
+      .f06-capabilities-item::before{
+        content:"";position:absolute;left:.1cqw;top:.62cqw;
+        width:.5cqw;height:.5cqw;border-radius:9999px;
+        background:rgba(250,249,245,.34);
+      }
+      .f06-capabilities-card--tail .f06-capabilities-item::before{background:rgba(250,249,245,.26)}
+      .f06-capabilities-rulewrap{
+        margin-top:1.5cqw;height:1px;width:100%;
+        transform-origin:left center;
+      }
+      .f06-capabilities-rulewrap i{
+        display:block;height:1px;width:100%;background:rgba(20,20,19,.12);
+      }
+    </style>
+
+    <!-- full-bleed ground on its own clip layer -->
+    <div data-hf-id="hf-r4v2" class="clip f06-capabilities-ground" data-start="0" data-duration="15.5" data-track-index="0" id="f06-capabilities-el1"></div>
+
+    <div data-hf-id="hf-t5r4" class="f06-capabilities-inner">
+      <!-- Scene 1 · kicker — the frame's single coral moment -->
+      <p data-hf-id="hf-e6zc" class="clip f06-capabilities-kicker" data-start="0" data-duration="15.5" data-track-index="1" id="f06-capabilities-el2">✱ 它由两部分组成</p>
+
+      <div data-hf-id="hf-u7em" class="f06-capabilities-two">
+        <!-- ============ LEFT CARD · foreground subject ============ -->
+        <section data-hf-id="hf-wn33" class="clip f06-capabilities-card" data-start="0" data-duration="15.5" data-track-index="2" id="f06-capabilities-el3">
+          <p data-hf-id="hf-9w2n" class="f06-capabilities-label">用户网页&#160;&#160;/</p>
+          <h2 data-hf-id="hf-uqai" class="f06-capabilities-title">提交申请，等管理员批准</h2>
+          <ul data-hf-id="hf-crn0" class="f06-capabilities-list">
+            <li data-hf-id="hf-1vsi" class="f06-capabilities-item">绑定学校打卡账号</li>
+            <li data-hf-id="hf-morb" class="f06-capabilities-item">每天自动签到</li>
+            <li data-hf-id="hf-71bi" class="f06-capabilities-item">日历看板查看自己的记录</li>
+          </ul>
+        </section>
+
+        <!-- ============ RIGHT CARD · supporting, one notch lower ============ -->
+        <section data-hf-id="hf-zzvj" class="clip f06-capabilities-card f06-capabilities-card--tail" data-start="0" data-duration="15.5" data-track-index="3" id="f06-capabilities-el4">
+          <p data-hf-id="hf-o9a0" class="f06-capabilities-label">管理员网页&#160;&#160;/admin</p>
+          <h2 data-hf-id="hf-uqre" class="f06-capabilities-title">有且仅有管理员本人可登录</h2>
+          <ul data-hf-id="hf-11tw" class="f06-capabilities-list">
+            <li data-hf-id="hf-bpxq" class="f06-capabilities-item">亲自审批每一个申请</li>
+            <li data-hf-id="hf-gn6b" class="f06-capabilities-item">成员管理与手动签到</li>
+            <li data-hf-id="hf-80gj" class="f06-capabilities-item">运行监控与日志</li>
+          </ul>
+          <div data-hf-id="hf-2gb2" class="f06-capabilities-rulewrap"><i data-hf-id="hf-wt6k"></i></div>
+        </section>
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        var root = document.getElementById("root");
+        if (!root || !window.gsap) return;
+        var qa = function (sel) { return Array.prototype.slice.call(root.querySelectorAll(sel)); };
+
+        var ground = qa(".f06-capabilities-ground")[0];
+        var kicker = qa(".f06-capabilities-kicker")[0];
+        var cards = qa(".f06-capabilities-card");
+        var left = cards[0];
+        var right = cards[1];
+
+        var tl = gsap.timeline({ paused: true });
+
+        /* ---------- Scene 1 (0.0-1.8s) — split-screen prep:
+           ground reads, kicker lands, both tile frames rise into place.
+           Voice cue: "工具分两部分。" ---------- */
+        tl.fromTo(ground, { opacity: 0.92 }, { opacity: 1, duration: 0.8, ease: "power1.out" }, 0);
+        tl.fromTo(kicker, { y: 16, opacity: 0 }, { y: 0, opacity: 1, duration: 0.72, ease: "power2.out" }, 0.2);
+        tl.fromTo(left, { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: "power2.out" }, 0.55);
+        tl.fromTo(right, { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: "power2.out" }, 0.9);
+
+        function fill(card, t0) {
+          var label = card.querySelector(".f06-capabilities-label");
+          var title = card.querySelector(".f06-capabilities-title");
+          var items = Array.prototype.slice.call(card.querySelectorAll(".f06-capabilities-item"));
+          var rule = card.querySelector(".f06-capabilities-rulewrap");
+
+          tl.fromTo(label, { y: 12, opacity: 0 },
+            { y: 0, opacity: 1, duration: 0.5, ease: "power2.out" }, t0);
+          tl.fromTo(title, { y: 18, opacity: 0 },
+            { y: 0, opacity: 1, duration: 0.7, ease: "power2.out" }, t0 + 0.75);
+          /* three pops, one per spoken item */
+          items.forEach(function (li, i) {
+            tl.fromTo(li, { y: 12, scale: 0.94, opacity: 0 },
+              { y: 0, scale: 1, opacity: 1, duration: 0.55, ease: "back.out(1.7)" }, t0 + 2.05 + i * 1.1);
+          });
+          if (rule) {
+            /* hairline draws on under the settled two — the admin card sign-off */
+            tl.fromTo(rule, { scaleX: 0.06, opacity: 0 },
+              { scaleX: 1, opacity: 1, duration: 0.8, ease: "power2.out" }, t0 + 4.85);
+          }
+        }
+
+        /* ---------- Scene 2 (1.8-8.0s) — LEFT card fills completely.
+           Voice cue: "用户端提交申请、绑定学校账号、查看自己的签到日历。" ---------- */
+        fill(left, 1.9);
+
+        /* ---------- Scene 3 (8.0-13.0s) — RIGHT card fills ~1.2s later, lower contrast.
+           Voice cue: "管理端由管理员亲自审批每一个申请——有且仅有管理员本人的账号能登录。" ---------- */
+        fill(right, 8.35);
+
+        /* ---------- Scene 4 (13.0-15.0s) — both cards hold still for the read.
+           No exit: the root transition owns the cut. ---------- */
+
+        window.__timelines = window.__timelines || {};
+        window.__timelines["06-capabilities"] = tl;
+      })();
+    </script>
+  </div>
+</template>

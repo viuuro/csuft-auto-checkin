@@ -1,0 +1,26 @@
+/* 由 tools/prepare_cjk_fonts.py 生成 —— 中文本片子集字体。
+   各帧把这段 CSS 内联进自己的 <style> 即可满足 lint 并保证渲染一致。 */
+
+@font-face {
+  font-family: "Noto Sans SC";
+  font-style: normal;
+  font-weight: 400;
+  src: url("assets/fonts/NotoSansSC-400.woff2") format("woff2");
+  font-display: block;
+}
+
+@font-face {
+  font-family: "Noto Sans SC";
+  font-style: normal;
+  font-weight: 700;
+  src: url("assets/fonts/NotoSansSC-700.woff2") format("woff2");
+  font-display: block;
+}
+
+@font-face {
+  font-family: "Noto Serif SC";
+  font-style: normal;
+  font-weight: 400;
+  src: url("assets/fonts/NotoSerifSC-400.woff2") format("woff2");
+  font-display: block;
+}

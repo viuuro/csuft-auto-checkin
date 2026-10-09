@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "preferences": {
+    "style_preset.faceless-explainer": {
+      "value": "code-editorial",
+      "confirmed_in": [
+        "video-intro"
+      ],
+      "updated_at": "2026-10-09T11:01:11.199Z"
+    }
+  },
+  "sightings": {}
+}

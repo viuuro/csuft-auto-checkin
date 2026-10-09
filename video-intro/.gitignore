@@ -1,0 +1,25 @@
+# video-intro/.gitignore
+#
+# 只让「可复现工程的源码 + 最终成片」进仓库，其余都是本机产物。
+#
+# 原则：
+#   * 提交 —— 分镜、帧合成、设计规格、字体、音效、元数据、最终 MP4
+#   * 忽略 —— 缩略图、波形缓存、预览快照、临时调试文件、中间版本 MP4
+
+# ---- 本机缓存与中间产物 ----
+.thumbnails/
+.waveform-cache/
+.hyperframes/preview/
+.hyperframes/verify/
+.hyperframes/storyboard-*.png
+.hyperframes/frame-packets/
+.hyperframes/cjk-charset.txt
+
+# ---- 预览与调试用的临时文件 ----
+.frame-*
+probe-*.mjs
+_probe_*.py
+
+# ---- 渲染产物：只留最终成片，其余中间版本忽略 ----
+renders/*.mp4
+!renders/video-intro-final.mp4
