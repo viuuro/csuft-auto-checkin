@@ -62,6 +62,40 @@ tools/check_deps.py
 tools/pc_wxapkg_decrypt/
 tools/pc_wxapkg_decrypt_python/
 
+# ---- 一次性修补脚本（已执行完，结论已固化进产物，不入库）----
+# 视频工程的主题/令牌类修正
+tools/apply_light_scheme.py
+tools/fix_light_text.py
+tools/fix_coral_contrast.py
+tools/pick_coral_light.py
+tools/audit_cream_text.py
+tools/add_system_font_faces.py
+# 帧合成结构修正
+tools/fix_class_names.py
+tools/fix_frames.py
+tools/repair_frames.py
+tools/fix_stale_selectors.py
+tools/fix_track_overlaps.py
+tools/renumber_frames.py
+tools/fix_ground_by_reference.py
+# 工具包编码修正（已执行，结论写进 tools/build_classmate_kit.py）
+tools/fix_start_bat_encoding.py
+tools/extract_kit_scripts.py
+tools/drop_pycache.py
+# 临时分类脚本
+tools/classify_untracked.py
+
+# ---- 视频工程（本地演示用，不入库）----
+# 视频不是这个项目的交付物，只是作者留作演示。
+# 注意：早期版本曾提交过 video-intro/，那些文件需要 git rm --cached 才会移出。
+video-intro/
+
+# ---- 本机开发环境配置（含绝对路径，不入库）----
+tools/hfenv.ps1
+tools/*.bak
+tools/*.bak2
+tools/*.bak-gbk
+
 # 编辑器
 .idea/
 .vscode/

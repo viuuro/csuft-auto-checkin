@@ -20,10 +20,22 @@ MITMDUMP = HERE / "mitmdump.exe"
 CA_FILE = HERE / ".mitmproxy" / "mitmproxy-ca-cert.cer"
 PORT = 8888
 
-try:
-    sys.stdout.reconfigure(encoding="utf-8")
-except Exception:  # noqa: BLE001
-    pass
+# 控制台代码页是 UTF-8（bat 里执行了 chcp 65001），stdout 与 stderr
+# 都要按 UTF-8 输出，否则异常时的 traceback 中文会乱码。
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(encoding="utf-8", errors="replace")
+    except (AttributeError, OSError):
+        pass
+
+
+def ask(prompt: str, default: str = "") -> str:
+    """读一行输入；stdin 不可用时返回 default 而不是抛 EOFError。"""
+    try:
+        return input(prompt)
+    except EOFError:
+        print()
+        return default
 
 
 def banner(t: str) -> None:
@@ -143,7 +155,7 @@ def main() -> int:
    * 都正常但仍失败     → 把第 4 步的日志一起发过去
 """)
     try:
-        input("按回车退出…")
+        ask("按回车退出…")
     except (EOFError, KeyboardInterrupt):
         pass
     return 0
@@ -160,7 +172,7 @@ if __name__ == "__main__":
         print(f"\n诊断脚本自身出错: {type(exc).__name__}: {exc}")
         traceback.print_exc()
         try:
-            input("按回车退出…")
+            ask("按回车退出…")
         except (EOFError, KeyboardInterrupt):
             pass
         raise SystemExit(1) from exc
