@@ -87,8 +87,13 @@ tools/classify_untracked.py
 
 # ---- 视频工程（本地演示用，不入库）----
 # 视频不是这个项目的交付物，只是作者留作演示。
-# 注意：早期版本曾提交过 video-intro/，那些文件需要 git rm --cached 才会移出。
+# 注意：早期版本曾提交过 video-intro/，那些文件已用 git rm --cached 移出索引。
 video-intro/
+# 视频工程专用工具（视频不入库，这些也就不需要）
+tools/check_fonts.py
+tools/prepare_cjk_fonts.py
+tools/scan_bad_selectors.py
+tools/sync_frame_durations.py
 
 # ---- 本机开发环境配置（含绝对路径，不入库）----
 tools/hfenv.ps1
